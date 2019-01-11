@@ -10,6 +10,11 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{listings}
 
 \def\rubric#1{\gre{Rubric: \{#1\}}}{}
 
@@ -22,6 +27,22 @@
 \def\red#1{{\color{red}#1}}
 \definecolor{ans}{rgb}{0.545,0.27,0.074}
 \def\ans#1{{\color{ans}#1}}
+\definecolor{yel}{rgb}{1,0.545,0}
+\def\yel#1{{\color{yel}#1}}
+
+% Configuration
+\usepackage[font={color=ans,bf},figurename=Fig.,labelfont={it}]{caption}
+\lstset{
+    language=python,
+    breaklines=true,
+    keywordstyle=\color{ans},
+    numberstyle=\small\color{ans},
+    basicstyle=\ttfamily\color{ans},
+    keywordstyle=\color{blu},
+    commentstyle=\color{gre},
+    stringstyle=\color{yel},
+    frame = single,
+}
 
 
 % Math
@@ -178,7 +199,7 @@ and use $x_i$ to denote element $i$ of vector $x$.
 \rubric{reasoning:10}
 
 Assume that $\{x,y,z\}$ are $n \times 1$ column vectors, $\{A,B,C\}$ are $n \times n$ real-valued matrices, \red{$0$ is the zero matrix of appropriate size}, and $I$ is the identity matrix of appropriate size. \blu{State whether each of the below is true in general} (you do not need to show your work).
-% JATJ: Re check this
+% JATJ: Check this
 \begin{enumerate}
 \item $x^Ty = \sum_{i=1}^n x_iy_i$. \ans{\fbox{true}}
 \item $x^Tx = \norm{x}^2$. \ans{\fbox{false}}
@@ -336,11 +357,11 @@ Note: we'll use the standard convention that the leaves are not included in the 
 
 \blu{Answer the following questions using big-$O$ notation} You do not need to show your work.
 \begin{enumerate}
-\item What is the cost of finding the largest number in an unsorted list of $n$ numbers? \ans{O($n$)}
-\item What is the cost of finding the smallest element ansater than 0 in a \emph{sorted} list with $n$ numbers. \ans{O(log $n$)}
-\item What is the cost of finding the value associated with a key in a hash table with $n$ numbers? \\(Assume the values and keys are both scalars.) \ans{O($n$)}
-\item What is the cost of computing the inner product $a^Tx$, where $a$ is $d \times 1$ and $x$ is $d \times 1$? \ans{O($d$)}
-\item What is the cost of computing the quadratic form $x^TAx$ when $A$ is $d \times d$ and $x$ is $d \times 1$. \ans{O($d^3$)}
+\item What is the cost of finding the largest number in an unsorted list of $n$ numbers? \ans{\fbox{O($n$)}}
+\item What is the cost of finding the smallest element ansater than 0 in a \emph{sorted} list with $n$ numbers. \ans{\fbox{O(log $n$)}}
+\item What is the cost of finding the value associated with a key in a hash table with $n$ numbers? \\(Assume the values and keys are both scalars.) \ans{\fbox{O($n$)}}
+\item What is the cost of computing the inner product $a^Tx$, where $a$ is $d \times 1$ and $x$ is $d \times 1$? \ans{\fbox{O($d$)}}
+\item What is the cost of computing the quadratic form $x^TAx$ when $A$ is $d \times d$ and $x$ is $d \times 1$. \ans{\fbox{O($d^3$)}}
 \end{enumerate}
 
 \subsection{Running times of code}
@@ -372,12 +393,62 @@ region. If desired, you can convert from a DataFrame to a raw numpy array with \
 
 \blu{Report the following statistics}:
 \enum{
-\item The minimum, maximum, mean, median, and mode of all values across the dataset.
-\item The $5\%$, $25\%$, $50\%$, $75\%$, and $95\%$ quantiles of all values across the dataset.
-\item The names of the regions with the highest and lowest means, and the highest and lowest variances.
+\item The minimum, maximum, mean, median, and mode of all values across the dataset.\\ \\
+%
+% $Stats$ & NE & MidAtl & ENCentral & WNCentral & SAt1 & ESCentral & WSCentral & Mtn & Pac & WtdILI \\ \midrule
+% minimum & 0.428000 & 0.483000 & 0.452000 & 0.464000 & 0.468000 & 0.554000 & 0.456000 & 0.352000 & 0.377000 & 0.606000 \\
+% maximum & 2.310000 & 2.205000 & 2.515000 & 3.115000 & 2.714000 & 3.859000 & 3.219000 & 4.862000 & 2.660000 & 3.260000 \\
+% mean & 1.223346 & 1.233538 & 1.275269 & 1.460212 & 1.298827 & 1.562519 & 1.292346 & 1.270019 & 1.063212 & 1.566962 \\
+% median & 1.129500 & 1.116000 & 1.265000 & 1.277500 & 1.102500 & 1.416500 & 1.107500 & 0.978500 & 0.957000 & 1.303500 \\
+% mode & 0.428000 & 0.490000 & 0.452000 & 0.505000 & 0.542000 & 0.554000 & 0.499000 & 0.352000 & 0.377000 & 0.715000 \\ \bottomrule
+%
+\ans{
+    \scriptsize
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular}{SSSSSSSSSSS} \toprule
+        {Stats} & {NE} & {MidAtl} & {ENCentral} & {WNCentral} & {SAt1} & {ESCentral} & {WSCentral} & {Mtn} & {Pac} & {WtdILI} \\ \midrule
+        {minimum} & 0.428 & 0.483 & 0.452 & 0.464 & 0.468 & 0.554 & 0.456 & 0.352 & 0.377 & 0.606 \\
+        {maximum} & 2.310 & 2.205 & 2.515 & 3.115 & 2.714 & 3.859 & 3.219 & 4.862 & 2.660 & 3.260 \\
+        {mean} & 1.223 & 1.233 & 1.275 & 1.460 & 1.298 & 1.562 & 1.292 & 1.270 & 1.063 & 1.566 \\
+        {median} & 1.129 & 1.116 & 1.265 & 1.277 & 1.102 & 1.416 & 1.107 & 0.978 & 0.957 & 1.303 \\
+        {mode} & 0.428 & 0.490 & 0.452 & 0.505 & 0.542 & 0.554 & 0.499 & 0.352 & 0.377 & 0.715 \\ \bottomrule
+    \end{tabular}
+    \normalsize
 }
-In light of the above, \blu{is the mode a reliable estimate of the most ``common" value? Describe another way we could give a meaningful ``mode" measurement for this (continuous) data.} Note: the function \texttt{utils.mode()} will compute the mode value of an array for you.
-
+\setlength{\tabcolsep}{6pt}
+\item The $5\%$, $25\%$, $50\%$, $75\%$, and $95\%$ quantiles of all values across the dataset. \\ \\
+\ans{
+    \scriptsize
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular}{SSSSSSSSSSS} \toprule
+        {Stats} & {NE} & {MidAtl} & {ENCentral} & {WNCentral} & {SAt1} & {ESCentral} & {WSCentral} & {Mtn} & {Pac} & {WtdILI} \\ \midrule
+        {5\% quantile} & 0.435 & 0.492 & 0.469 & 0.495 & 0.517 & 0.577 & 0.485 & 0.398 & 0.399 & 0.615 \\
+        {25\% quantile} & 0.728 & 0.714 & 0.711 & 0.701 & 0.737 & 0.922 & 0.708 & 0.624 & 0.556 & 0.795 \\
+        {50\% quantile} & 1.129 & 1.116 & 1.265 & 1.277 & 1.102 & 1.416 & 1.107 & 0.978 & 0.957 & 1.303 \\
+        {75\% quantile} & 1.663 & 1.710 & 1.656 & 1.993 & 1.756 & 2.084 & 1.757 & 1.695 & 1.458 & 2.343 \\
+        {95\% quantile} & 2.240 & 2.175 & 2.249 & 2.934 & 2.491 & 3.157 & 2.537 & 2.808 & 2.133 & 3.127 \\ \bottomrule
+    \end{tabular}
+    \normalsize
+}
+\setlength{\tabcolsep}{6pt}
+\item The names of the regions with the highest and lowest means, and the highest and lowest variances. \\ \\
+\ans{
+    \scriptsize
+    \setlength{\tabcolsep}{2pt}
+    \begin{tabular}{SSS} \toprule
+        {Performance} & {Mean} & {Variance} \\ \midrule
+        {Highest} & {WtdILI} & {Mtn} \\
+        {Lowest} & {Pac} & {Pac} \\ \bottomrule
+    \end{tabular}
+    \normalsize
+}
+\setlength{\tabcolsep}{6pt}
+}
+In light of the above, \blu{is the mode a reliable estimate of the most ``common" value? Describe another way we could give a meaningful ``mode" measurement for this (continuous) data.} Note: the function \texttt{utils.mode()} will compute the mode value of an array for you. \\
+% JATJ: answer this
+\ans{
+    Describe
+}
 
 
 \subsection{Data Visualization}
@@ -389,12 +460,12 @@ Consider the figure below.
 
 The figure contains the following plots, in a shuffled order:
 \enum{
-\item A single histogram showing the distribution of \emph{each} column in $X$.
-\item A histogram showing the distribution of each the values in the matrix $X$.
-\item A boxplot grouping data by weeks, showing the distribution across regions for each week.
-\item A plot showing the illness percentages over time.
-\item A scatterplot between the two regions with highest correlation.
-\item A scatterplot between the two regions with lowest correlation.
+\item A single histogram showing the distribution of \emph{each} column in $X$. \ans{\fbox{Plot D} $\rightarrow$ shows the distribution of illness percentage of each region over the weeks, and in X each column is a region }
+\item A histogram showing the distribution of each the values in the matrix $X$. \ans{\fbox{Plot C} $\rightarrow$ shows the distribution of illness percentage of all the values in X, no taking in count the region }
+\item A boxplot grouping data by weeks, showing the distribution across regions for each week. \ans{\fbox{Plot B} $\rightarrow$ because this is a boxplot showing the information of each value in X by weeks}
+\item A plot showing the illness percentages over time. \ans{\fbox{Plot A} $\rightarrow$ because the illness percentage of the plot is in represented over time}
+\item A scatterplot between the two regions with highest correlation. \ans{\fbox{Plot F} $\rightarrow$ the values on this plot show a high correlation between each other because they all seem to follow the same pattern}
+\item A scatterplot between the two regions with lowest correlation. \ans{\fbox{Plot E} $\rightarrow$  as opposed to the Plot F this values do not follow a pattern}
 }
 
 \blu{Match the plots (labeled A-F) with the descriptions above (labeled 1-6), with an extremely brief (a few words is fine) explanation for each decision.}
@@ -427,7 +498,9 @@ This is not a very good classifier.
 \subsection{Splitting rule}
 \rubric{reasoning:1}
 
-Is there a particular type of features for which it makes sense to use an equality-based splitting rule rather than the threshold-based splits we discussed in class?
+Is there a particular type of features for which it makes sense to use an equality-based splitting rule rather than the threshold-based splits we discussed in class? \\
+\\
+\ans{If the domain of a feature is a finite number (i.e., The feature has labels representing the age of people as 'Child','Adult' and 'Old'), in those scenarios it makes sense to use an equality-based splitting rule rather than a threshold-based splitting. }
 
 \subsection{Decision Stump Implementation}
 \rubric{code:3}
@@ -442,6 +515,13 @@ obtain by using inequalities instead of discretizing and testing equality. Also 
 
 Hint: you may want to start by copy/pasting the contents \texttt{DecisionStumpEquality} and then make modifications from there. 
 
+%JATJ: check this
+\ans{
+    The \texttt{DecisionStumpErrorRate} predict $y$ with an error of \fbox{0.280}. The following figure
+    represents the boundary regions from the model.
+}
+
+\centerfig{0.7}{../figs/q6_2_decisionBoundary}
 
 \subsection{Decision Stump Info Gain Implementation}
 \rubric{code:3}
@@ -462,6 +542,17 @@ going to one side of the split. Thus, when you call \texttt{np.bincount}, you'll
 a shorter array by default, which is not what you want. Setting \texttt{minlength} to the 
 number of classes solves this problem.
 
+%JATJ: check this
+\ans{
+    The \texttt{DecisionStumpInfoGain} predict $y$ with an error of \fbox{0.355}. The following figure
+    represents the boundary regions from the model.
+}
+\centerfig{0.7}{../figs/q6_3_decisionBoundary} 
+\ans{
+    From the figure we can observe that this decision stump considered as split variable another 
+    feature of the data X, this is why the regios are divided by a vertical line.
+}
+
 \subsection{Constructing Decision Trees}
 \rubric{code:2}
 
@@ -477,11 +568,34 @@ Note: this code should implement the specific, fixed decision tree
 which was learned after calling \texttt{fit} on this particular data set. It does not need to be a learnable model.
 You should just hard-code the split values directly into the code. Only the \texttt{predict} function is needed.
 
-Hint: if you plot the decision boundary you can do a visual sanity check to see if your code is consistent with the plot.
+Hint: if you plot the decision boundary you can do a visual sanity check to see if your code is consistent with the plot. \\
 
+%JATJ: check this
 
-
-
+\ans{
+    Here are the two figures of the plot boundary regions of both DecisionTrees, the InfoGain and the hard coded one. \\ \\ \\ \\ \\ \\ \\ \\ \\
+}
+\begin{figure}[htp]
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centerfig{1}{../figs/q6_4_decisionBoundary}
+      \caption{DecisionStumpInfoGain of depth 2}
+      \label{fig:1}
+    \end{subfigure}
+    %
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centerfig{1}{../figs/q6_4_1_HardCodedDecisionBoundary}
+        \caption{DecisionStumpHardCoded}
+      \label{fig:2}
+    \end{subfigure}
+\end{figure}
+\ans{
+     \\Here is the code from \texttt{simple\string_decision.py}. It contains the definition offered
+     the class DecisionStumpHardCoded, which just implements the function \emph{predict}, by
+     using the split values and split variables acquired from running the file \texttt{main.py -q 6.4} \\
+}
+\begin{center}
+    \lstinputlisting[language=python]{../code/simple_decision.py}
+\end{center}
 
 \subsection{Decision Tree Training Error}
 \rubric{reasoning:2}
@@ -503,6 +617,19 @@ Note: the code also prints out the amount of time spent. You'll notice that skle
 our implementation is based on the $O(n^2d)$ decision stump learning algorithm and sklearn's implementation presumably uses the faster $O(nd\log n)$
 decision stump learning algorithm that we discussed in lecture.
 
+%JATJ: check this
+\ans{
+    The approach(1) or DecisionStumpErrorRate has the best performance at the initial depth, 
+    but it has also the worst performance on the next depths. This is due because of the
+    way the DecisionStump calculates the thresholds, it is just taking in count the error of 
+    the prediction, whereas the DecisionStumpInfoGain reduces the entropy of the predictions
+    allowing this classifier to get a higher precision than the DecisionStumpErrorRate.
+    \\ \\
+    The model with the lowest training error would be the DecisionTreeClassifier from \emph{scikit-learn}, 
+    which is also the fastest. The following figure is the classification boundary plot of that model.
+    \centerfig{0.7}{../figs/q6_5_1_LowestErrorDecisionBoundary}
+}
+
 \subsection{Comparing implementations}
 \rubric{reasoning:2}
 
@@ -511,6 +638,18 @@ approaches produce the exact same curve of classification error rate vs. tree de
 that the two implementations are the same? If so, why? If not, what other experiment might you perform to build confidence
 that the implementations are probably equivalent?
 
+%JATJ: check this
+\ans{
+    Having two implementations with the same curve of classification error rate vs. tree depth does not 
+    necessary demonstrate that both implementations are the same. This is because this two implementations
+    may have the exact error at certain depth but this do not mean that they use the same feature and
+    threshold to classify. It may just be that the error at that depth is the same, but with 
+    different split variables and values.
+    \\ \\
+    Another method that we can use in order to clarify if both implementations are equivalent is 
+    by plotting the classification boundaries of both models. With this we can visualize the 
+    thresholds used by each model and if this looks similar they may be the equivalent implementations.
+}
 
 \subsection{Cost of Fitting Decision Trees}
 \rubric{reasoning:3}
@@ -520,5 +659,9 @@ Using the greedy recursive splitting procedure, \blu{what is the total cost of f
 
 Hint: even thought there could be $(2^m-1)$ decision stumps, keep in mind not every stump will need to go through every example. Note also that we stop growing the decision tree if a node has no examples, so we may not even need to do anything for many of the $(2^m-1)$ decision stumps.
 
+%JATJ: answer this
+\ans{
+    Report
+}
 
 \end{document}

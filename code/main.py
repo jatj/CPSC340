@@ -248,6 +248,18 @@ if __name__ == "__main__":
         plt.legend()
         fname = os.path.join("..", "figs", "q6_5_tree_errors.pdf")
         plt.savefig(fname)
+        
+        model = DecisionTreeClassifier(max_depth=depths[-1], criterion='entropy', random_state=1)
+        model.fit(X, y)
+        utils.plotClassifier(model, X, y)
+        y_pred = model.predict(X)
+        error = np.mean(y_pred != y)
+
+        #print("Error: %.3f" % error)
+
+        fname = os.path.join("..", "figs", "q6_5_1_LowestErrorDecisionBoundary.pdf")
+        plt.savefig(fname)
+        #print("\nFigure saved as '%s'" % fname)
 
 
     else:
