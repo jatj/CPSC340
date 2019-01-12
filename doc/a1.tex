@@ -14,7 +14,9 @@
 \usepackage{siunitx}
 \usepackage{caption}
 \usepackage{subcaption}
-\usepackage{listings}
+\usepackage{bookmark}
+\usepackage{hyperref}
+\usepackage[procnames]{listings}
 
 \def\rubric#1{\gre{Rubric: \{#1\}}}{}
 
@@ -25,23 +27,24 @@
 \def\gre#1{{\color{gre}#1}}
 \definecolor{red}{rgb}{1,0,0}
 \def\red#1{{\color{red}#1}}
-\definecolor{ans}{rgb}{0.545,0.27,0.074}
+\definecolor{ans}{rgb}{0,.5,0}%{0.545,0.27,0.074}
 \def\ans#1{{\color{ans}#1}}
-\definecolor{yel}{rgb}{1,0.545,0}
-\def\yel#1{{\color{yel}#1}}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
 
 % Configuration
 \usepackage[font={color=ans,bf},figurename=Fig.,labelfont={it}]{caption}
 \lstset{
-    language=python,
-    breaklines=true,
-    keywordstyle=\color{ans},
-    numberstyle=\small\color{ans},
-    basicstyle=\ttfamily\color{ans},
-    keywordstyle=\color{blu},
-    commentstyle=\color{gre},
-    stringstyle=\color{yel},
-    frame = single,
+    language=Python, 
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{keywords},
+    commentstyle=\color{comments},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    identifierstyle=\color{green},
+    procnamekeys={def,class}
 }
 
 
@@ -56,7 +59,7 @@
 
 % LaTeX
 \newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
-\newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+\newcommand{\centerfig}[3]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\captionof{figure}{#3}\end{center}}
 \def\items#1{\begin{itemize}#1\end{itemize}}
 \def\enum#1{\begin{enumerate}#1\end{enumerate}}
 
@@ -69,6 +72,10 @@
 
 
 \vspace{-4em}
+\gre{
+    Student name: José Abraham Torres Juárez \\
+    Student id: 79507828 \\ \\
+}
 
 \textbf{Commentary on Assignment 1}: CPSC 340 is tough because it combines knowledge and skills across several disciplines. To succeed
 in the course, you will need to know or very quickly get up to speed on:
@@ -413,6 +420,15 @@ region. If desired, you can convert from a DataFrame to a raw numpy array with \
         {median} & 1.129 & 1.116 & 1.265 & 1.277 & 1.102 & 1.416 & 1.107 & 0.978 & 0.957 & 1.303 \\
         {mode} & 0.428 & 0.490 & 0.452 & 0.505 & 0.542 & 0.554 & 0.499 & 0.352 & 0.377 & 0.715 \\ \bottomrule
     \end{tabular}
+    \\ \\ \\
+    \begin{tabular}{SSS} \toprule
+        {Global Stats} & {Value} & {Region} \\ \midrule
+        {minimum} & 0.352 & {Mtn} \\
+        {maximum} & 4.862 & {Mtn} \\
+        {mean} & 1.32463 & {NA} \\
+        {median} & 1.159 & {NA} \\
+        {mode} & 0.77 & {NA} \\ \bottomrule
+    \end{tabular}
     \normalsize
 }
 \setlength{\tabcolsep}{6pt}
@@ -444,10 +460,10 @@ region. If desired, you can convert from a DataFrame to a raw numpy array with \
 }
 \setlength{\tabcolsep}{6pt}
 }
-In light of the above, \blu{is the mode a reliable estimate of the most ``common" value? Describe another way we could give a meaningful ``mode" measurement for this (continuous) data.} Note: the function \texttt{utils.mode()} will compute the mode value of an array for you. \\
-% JATJ: answer this
+In light of the above, \blu{is the mode a reliable estimate of the most ``common" value? Describe another way we could give a meaningful ``mode" measurement for this (continuous) data.} Note: the function \texttt{utils.mode()} will compute the mode value of an array for you. \\ \\
+% JATJ: check this
 \ans{
-    Describe
+    In this particular dataset the mode is not a reliable estimate of the most "common" value in the dataset, because the mean is very different from the mode.
 }
 
 
@@ -490,7 +506,7 @@ and then finds the best equality-based rule (i.e., check
 It reports the training error with these two classifiers, then plots the decision areas made by the decision stump.
 The plot is shown below:
 
-\centerfig{0.7}{../figs/q6_decisionBoundary}
+\centerfig{0.7}{../figs/q6_decisionBoundary}{Boundary regions of \texttt{DecisionStumpEquality}}
 
 As you can see, it is just checking whether the latitude equals 35 and, if so, predicting red (Republican).
 This is not a very good classifier. 
@@ -517,11 +533,13 @@ Hint: you may want to start by copy/pasting the contents \texttt{DecisionStumpEq
 
 %JATJ: check this
 \ans{
-    The \texttt{DecisionStumpErrorRate} predict $y$ with an error of \fbox{0.280}. The following figure
+    The \texttt{DecisionStumpErrorRate} predict $y$ with an error of \fbox{0.253}. The following figure
     represents the boundary regions from the model.
 }
 
-\centerfig{0.7}{../figs/q6_2_decisionBoundary}
+\centerfig{0.7}{../figs/q6_2_decisionBoundary}{Boundary regions of \texttt{DecisionStumpErrorRate}}
+
+See \hyperref[appendix:DecisionStumpErrorRate]{\textbf{Appendix A}} for the implementation of \texttt{DecisionStumpErrorRate}.\\
 
 \subsection{Decision Stump Info Gain Implementation}
 \rubric{code:3}
@@ -544,14 +562,16 @@ number of classes solves this problem.
 
 %JATJ: check this
 \ans{
-    The \texttt{DecisionStumpInfoGain} predict $y$ with an error of \fbox{0.355}. The following figure
+    The \texttt{DecisionStumpInfoGain} predict $y$ with an error of \fbox{0.325}. The following figure
     represents the boundary regions from the model.
 }
-\centerfig{0.7}{../figs/q6_3_decisionBoundary} 
+\centerfig{0.7}{../figs/q6_3_decisionBoundary}{Boundary regions of \texttt{DecisionStumpInfoGain}}
 \ans{
     From the figure we can observe that this decision stump considered as split variable another 
     feature of the data X, this is why the regios are divided by a vertical line.
 }
+
+See \hyperref[appendix:DecisionStumpInfoGain]{\textbf{Appendix B}} for the implementation of \texttt{DecisionStumpInfoGain}.\\
 
 \subsection{Constructing Decision Trees}
 \rubric{code:2}
@@ -577,25 +597,21 @@ Hint: if you plot the decision boundary you can do a visual sanity check to see 
 }
 \begin{figure}[htp]
     \begin{subfigure}[b]{0.4\textwidth}
-        \centerfig{1}{../figs/q6_4_decisionBoundary}
-      \caption{DecisionStumpInfoGain of depth 2}
+        \centerfig{1}{../figs/q6_4_decisionBoundary}{DecisionStumpInfoGain of depth 2}
       \label{fig:1}
     \end{subfigure}
     %
     \begin{subfigure}[b]{0.4\textwidth}
-        \centerfig{1}{../figs/q6_4_1_HardCodedDecisionBoundary}
-        \caption{DecisionStumpHardCoded}
+        \centerfig{1}{../figs/q6_4_1_HardCodedDecisionBoundary}{DecisionStumpHardCoded}
       \label{fig:2}
     \end{subfigure}
 \end{figure}
 \ans{
      \\Here is the code from \texttt{simple\string_decision.py}. It contains the definition offered
      the class DecisionStumpHardCoded, which just implements the function \emph{predict}, by
-     using the split values and split variables acquired from running the file \texttt{main.py -q 6.4} \\
+     using the split values and split variables acquired from running the file \texttt{main.py -q 6.4} \\ \\
 }
-\begin{center}
-    \lstinputlisting[language=python]{../code/simple_decision.py}
-\end{center}
+See \hyperref[appendix:DecisionStumpHardCoded]{\textbf{Apendix C}}, for de implementation of the \texttt{DecisionStumpHardCoded} classifier
 
 \subsection{Decision Tree Training Error}
 \rubric{reasoning:2}
@@ -625,10 +641,11 @@ decision stump learning algorithm that we discussed in lecture.
     the prediction, whereas the DecisionStumpInfoGain reduces the entropy of the predictions
     allowing this classifier to get a higher precision than the DecisionStumpErrorRate.
     \\ \\
-    The model with the lowest training error would be the DecisionTreeClassifier from \emph{scikit-learn}, 
-    which is also the fastest. The following figure is the classification boundary plot of that model.
-    \centerfig{0.7}{../figs/q6_5_1_LowestErrorDecisionBoundary}
+    The model with the lowest training error would be the DecisionStumpInfoGain and the DecisionTreeClassifier from \emph{scikit-learn}. 
+    The following figure is the classification boundary plot of that model. \\
 }
+\centerfig{1}{../figs/q6_5_1_LowestErrorDecisionBoundary}{Boundary regions of DecisionStumpInfoGain}
+\centerfig{1}{../figs/q6_5_tree_errors}{Error over Depth of each classifier}
 
 \subsection{Comparing implementations}
 \rubric{reasoning:2}
@@ -659,9 +676,31 @@ Using the greedy recursive splitting procedure, \blu{what is the total cost of f
 
 Hint: even thought there could be $(2^m-1)$ decision stumps, keep in mind not every stump will need to go through every example. Note also that we stop growing the decision tree if a node has no examples, so we may not even need to do anything for many of the $(2^m-1)$ decision stumps.
 
-%JATJ: answer this
+%JATJ: check this
 \ans{
-    Report
+    The procedure of calculating one rule of the decision tree has the complexity $O(n)$, but this process needs to be repeated $nd$ times, so this gives a complexity of $O(n^2d)$ the complexity of calculating one decision stump. But we have to this recursively until the depth $m$, or if there is no more data to split into another decision stump, which might occur before than getting to depth level $m$. The process of recursively split the data in 2 on each depth has complexity of $O($log$ n)$, multiplied by the complexity of calculating a decision stump, it is $O(nd$log$ n)$
 }
+
+\bookmarksetup{startatroot}
+
+\appendix
+
+\section{Appendix: Decision Tree Error Rate}
+\label{appendix:DecisionStumpErrorRate}
+\begin{center}
+    \lstinputlisting[firstline=81,lastline=151]{../code/decision_stump.py}
+\end{center}
+
+\section{Appendix: Decision Tree Info Gain}
+\label{appendix:DecisionStumpInfoGain}
+\begin{center}
+    \lstinputlisting[firstline=170,lastline=237]{../code/decision_stump.py}
+\end{center}
+
+\section{Appendix: Simple Decision Tree}
+\label{appendix:DecisionStumpHardCoded}
+\begin{center}
+    \lstinputlisting[firstline=9,lastline=43]{../code/simple_decision.py}
+\end{center}
 
 \end{document}

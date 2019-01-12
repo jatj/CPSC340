@@ -68,8 +68,20 @@ if __name__ == "__main__":
             df.median().values,
             df.mode().values[0]
         ])
+        global_stats_rows = ["minimum", "maximum", "mean", "median", "mode"]
+        global_stats_cols = ["value", "region"]
+        global_stats = pd.DataFrame(index=global_stats_rows, columns=global_stats_cols, data = [
+            [stats.loc["minimum"].min(),stats.loc["minimum"].idxmin()],
+            [stats.loc["maximum"].max(),stats.loc["maximum"].idxmax()],
+            [X.mean(),"NA"],
+            [np.median(X),"NA"],
+            [utils.mode(X),"NA"]
+        ])
         print("\n************************************************ 5.1.1 STATISTICS \n")
         print(stats)
+        print("\n\n")
+        print(global_stats)
+
 
         # ----------------------------------- 5.1.2
         quatiles_rows = ["5%","25%","50%","75%","95%"]
@@ -249,7 +261,7 @@ if __name__ == "__main__":
         fname = os.path.join("..", "figs", "q6_5_tree_errors.pdf")
         plt.savefig(fname)
         
-        model = DecisionTreeClassifier(max_depth=depths[-1], criterion='entropy', random_state=1)
+        model = DecisionTree(max_depth=max_depth,stump_class=DecisionStumpInfoGain)
         model.fit(X, y)
         utils.plotClassifier(model, X, y)
         y_pred = model.predict(X)

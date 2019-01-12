@@ -106,7 +106,6 @@ class DecisionStumpErrorRate:
         minError = np.sum(y > y_mode)
 
         # Loop over features looking for the best split
-        X = np.round(X)
 
         for d in range(D):
             for n in range(N):
@@ -191,8 +190,6 @@ class DecisionStumpInfoGain(DecisionStumpErrorRate):
         maxInfoGain = None
 
         # Loop over features looking for the best split
-        X = np.round(X)
-
         for d in range(D):
             for n in range(N):
                 # Choose value to equate to
