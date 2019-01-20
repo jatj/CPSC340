@@ -10,7 +10,7 @@ import numpy as np
 from sklearn.naive_bayes import BernoulliNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
-
+from sklearn.neighbors import KNeighborsClassifier
 
 # our code
 import utils
@@ -64,6 +64,32 @@ if __name__ == '__main__':
         X, y = dataset["X"], dataset["y"]
         X_test, y_test = dataset["Xtest"], dataset["ytest"]
 
+        testErrors = np.zeros(15)
+        trainingErrors = np.zeros(15)
+        depths = range(1,16)
+        for d in depths:
+            model = DecisionTreeClassifier(max_depth=d, criterion='entropy', random_state=1)
+            model.fit(X, y)
+
+            y_pred = model.predict(X)
+            tr_error = np.mean(y_pred != y)
+
+            y_pred = model.predict(X_test)
+            te_error = np.mean(y_pred != y_test)
+
+            testErrors[d-1] = te_error
+            trainingErrors[d-1] = tr_error
+
+        plt.plot(depths, trainingErrors, label="Training")
+        plt.plot(depths, testErrors, label="Testing", linestyle=":", linewidth=3)
+
+        plt.xlabel("Depth of tree")
+        plt.ylabel("Error")
+        plt.legend()
+        fname = os.path.join("..", "figs", "q1_1_errors.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
+
 
 
     elif question == '1.2':
@@ -72,6 +98,43 @@ if __name__ == '__main__':
 
         X, y = dataset["X"], dataset["y"]
         n, d = X.shape
+        half_n = int(n/2)
+        Xs = [X[0:half_n],X[half_n:]]
+        Ys = [y[0:half_n],y[half_n:]]
+
+        for i in range(2):
+            Xtrain = Xs[i]
+            ytrain = Ys[i]
+
+            Xvalidation = Xs[(i+1)%2]
+            yvalidation = Ys[(i+1)%2]
+
+            validationErrors = np.zeros(15)
+            trainingErrors = np.zeros(15)
+            depths = range(1,16)
+            for d in depths:
+                model = DecisionTreeClassifier(max_depth=d, criterion='entropy', random_state=1)
+                model.fit(Xtrain, ytrain)
+
+                y_pred = model.predict(Xtrain)
+                tr_error = np.mean(y_pred != ytrain)
+
+                y_pred = model.predict(Xvalidation)
+                va_error = np.mean(y_pred != yvalidation)
+
+                validationErrors[d-1] = va_error
+                trainingErrors[d-1] = tr_error
+
+            plt.plot(depths, trainingErrors, label="Training")
+            plt.plot(depths, validationErrors, label="Validation", linestyle=":", linewidth=3)
+
+            plt.xlabel("Depth of tree")
+            plt.ylabel("Error")
+            plt.title("Error over depth")
+            fname = os.path.join("..", "figs", "q1_2_training_validation_{}.pdf".format(i+1))
+            plt.savefig(fname)
+            plt.clf()
+            print("\nFigure saved as '%s'" % fname)
 
 
 
@@ -85,8 +148,19 @@ if __name__ == '__main__':
         groupnames = dataset["groupnames"]
         wordlist = dataset["wordlist"]
 
+        # ############################ 2.2.1
+        print("\n############################ 2.2.1\n")
+        print("The word of column 51: {}".format(wordlist[50]))
 
+        # ############################ 2.2.2
+        print("\n############################ 2.2.2\n")
+        print("Words present in training example 501:")
+        print(wordlist[X[500] > 0])
 
+        # ############################ 2.2.3
+        print("\n############################ 2.2.3\n")
+        print("Newsgroup name of training example 501:")
+        print(groupnames[y[500]])
 
     elif question == '2.3':
         dataset = load_dataset("newsgroups.pkl")
@@ -107,6 +181,12 @@ if __name__ == '__main__':
         v_error = np.mean(y_pred != y_valid)
         print("Naive Bayes (ours) validation error: %.3f" % v_error)
 
+        # Scikit learn BernoulliNB
+        sciKit_naive_bayes = BernoulliNB()
+        sciKit_naive_bayes.fit(X,y)
+        y_pred = model.predict(X_valid)
+        v_error = np.mean(y_pred != y_valid)
+        print("Naive Bayes (scikit) validation error: %.3f" % v_error)
     
 
     elif question == '3':
@@ -118,6 +198,40 @@ if __name__ == '__main__':
         Xtest = dataset['Xtest']
         ytest = dataset['ytest']
 
+        modelKNN_1 = KNN(1)
+        modelKNN_1.fit(X,y)
+        y_pred = modelKNN_1.predict(Xtest)
+        error = np.mean(y_pred != ytest)
+        print("KNN (k=1) error: %.3f" % error)
+
+        modelKNN_3 = KNN(3)
+        modelKNN_3.fit(X,y)
+        y_pred = modelKNN_3.predict(Xtest)
+        error = np.mean(y_pred != ytest)
+        print("KNN (k=3) error: %.3f" % error)
+
+        modelKNN_10 = KNN(10)
+        modelKNN_10.fit(X,y)
+        y_pred = modelKNN_10.predict(Xtest)
+        error = np.mean(y_pred != ytest)
+        print("KNN (k=10) error: %.3f" % error)
+
+        modelKNN_Scikit = KNeighborsClassifier(n_neighbors=1)
+        modelKNN_Scikit.fit(X,y)
+        y_pred = modelKNN_10.predict(Xtest)
+        error = np.mean(y_pred != ytest)
+        print("KNN Scikit (k=1) error: %.3f" % error)
+
+        utils.plotClassifier(modelKNN_1,X,y)
+        fname = os.path.join("..", "figs", "q3_3_myKNN.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
+        plt.clf()
+
+        utils.plotClassifier(modelKNN_Scikit,X,y)
+        fname = os.path.join("..", "figs", "q3_3_scikitKNN.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
 
 
     elif question == '4':

@@ -21,9 +21,13 @@ class NaiveBayes:
 
         # Compute the conditional probabilities i.e.
         # p(x(i,j)=1 | y(i)==c) as p_xy
-        # p(x(i,j)=0 | y(i)==c) as p_xy
-        p_xy = 0.5 * np.ones((D, C))
-        # TODO: replace the above line with the proper code 
+        
+        p_xy = np.zeros((D, C))
+        for i in range(D):
+            for j in range(C):
+                givenX = X[y==j]
+                freq = givenX[:,j].sum()
+                p_xy[i][j] = freq/counts[j]
 
         self.p_y = p_y
         self.p_xy = p_xy

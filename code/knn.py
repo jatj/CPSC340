@@ -16,4 +16,13 @@ class KNN:
         self.y = y 
 
     def predict(self, Xtest):
-        raise NotImplementedError()
+        D = utils.euclidean_dist_squared(self.X, Xtest).transpose()
+        D_ = np.argsort(D)
+        DKNN_indices = D_[:,range(0,self.k)]
+        
+        t, k = DKNN_indices.shape
+        y_ = np.zeros(t)
+        for i in range(t):
+            y_[i] = utils.mode(np.take(self.y, DKNN_indices[i])) 
+                
+        return y_
