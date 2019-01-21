@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  20 JAN 2019 01:02
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  21 JAN 2019 00:58
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -686,7 +686,20 @@ Package caption Info: We need package `newfloat' on input line 40.
 Package: newfloat 2015/09/17 v1.1-109 Defining new floating environments (AR)
 ) (/usr/local/texlive/2018/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2015/06/04 1.6 listings language file
-) (./a2.aux)
+) (./a2.aux
+
+LaTeX Warning: Label `fig:1' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:1' multiply defined.
+
+
+LaTeX Warning: Label `fig:2' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:2' multiply defined.
+
+)
 \openout1 = `a2.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 68.
@@ -850,109 +863,202 @@ Package pdftex.def Info: ../figs/q1_1_errors.pdf  used on input line 100.
  [1
 
 {/usr/local/texlive/2018/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-<../figs/q1_2_training_validation_1.pdf, id=21, 462.52798pt x 346.89601pt>
+Underfull \hbox (badness 10000) in paragraph at lines 110--112
+
+ []
+
+[2 <../figs/q1_1_errors.pdf>]
+<../figs/q1_2_training_validation_1.pdf, id=58, 462.52798pt x 346.89601pt>
 File: ../figs/q1_2_training_validation_1.pdf Graphic file (type pdf)
 <use ../figs/q1_2_training_validation_1.pdf>
-Package pdftex.def Info: ../figs/q1_2_training_validation_1.pdf  used on input line 117.
+Package pdftex.def Info: ../figs/q1_2_training_validation_1.pdf  used on input line 115.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
-<../figs/q1_2_training_validation_2.pdf, id=22, 462.52798pt x 346.89601pt>
+<../figs/q1_2_training_validation_2.pdf, id=59, 462.52798pt x 346.89601pt>
 File: ../figs/q1_2_training_validation_2.pdf Graphic file (type pdf)
 <use ../figs/q1_2_training_validation_2.pdf>
-Package pdftex.def Info: ../figs/q1_2_training_validation_2.pdf  used on input line 122.
+Package pdftex.def Info: ../figs/q1_2_training_validation_2.pdf  used on input line 125.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
 
-Overfull \hbox (2.2222pt too wide) in paragraph at lines 116--125
+Overfull \hbox (2.2222pt too wide) in paragraph at lines 114--133
 [][] [] 
  []
 
-[2 <../figs/q1_1_errors.pdf>] [3 <../figs/q1_2_training_validation_1.pdf> <../figs/q1_2_training_validation_2.pdf
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--143
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--143
+
+ []
+
+[3
+
+ <../figs/q1_2_training_validation_1.pdf> <../figs/q1_2_training_validation_2.pdf
 
 pdfTeX warning: pdflatex (file ../figs/q1_2_training_validation_2.pdf): PDF inclusion: multiple pdfs with page group included in a single page
->] [4
+>] [4] [5]
+Underfull \hbox (badness 10000) in paragraph at lines 305--319
 
-] [5]
-Underfull \hbox (badness 10000) in paragraph at lines 289--302
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--319
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 340--348
 
  []
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 323--331
+<../figs/q3_3_myKNN.pdf, id=167, 462.52798pt x 346.89601pt>
+File: ../figs/q3_3_myKNN.pdf Graphic file (type pdf)
+<use ../figs/q3_3_myKNN.pdf>
+Package pdftex.def Info: ../figs/q3_3_myKNN.pdf  used on input line 411.
+(pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
+<../figs/q3_3_scikitKNN.pdf, id=168, 462.52798pt x 346.89601pt>
+File: ../figs/q3_3_scikitKNN.pdf Graphic file (type pdf)
+<use ../figs/q3_3_scikitKNN.pdf>
+Package pdftex.def Info: ../figs/q3_3_scikitKNN.pdf  used on input line 411.
+(pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
 
+Overfull \hbox (2.2222pt too wide) in paragraph at lines 411--411
+[][] [] 
  []
 
-[7]
-Overfull \hbox (5.66032pt too wide) in paragraph at lines 381--381
+[7 <../figs/q3_3_myKNN.pdf> <../figs/q3_3_scikitKNN.pdf
+
+pdfTeX warning: pdflatex (file ../figs/q3_3_scikitKNN.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>]
+Overfull \hbox (5.66032pt too wide) in paragraph at lines 492--492
 []\OT1/cmr/m/n/10 Create a class \OT1/cmtt/m/n/10 RandomForest \OT1/cmr/m/n/10 in a file called \OT1/cmtt/m/n/10 random_forest.py \OT1/cmr/m/n/10 that takes in hy-per-pa-ram-e-ters \OT1/cmtt/m/n/10 num_trees
  []
 
-<../figs/kmeans_basic.png, id=164, 462.528pt x 346.896pt>
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
+
+ []
+
+[8
+
+]
+<../figs/kmeans_basic.png, id=244, 462.528pt x 346.896pt>
 File: ../figs/kmeans_basic.png Graphic file (type png)
 <use ../figs/kmeans_basic.png>
-Package pdftex.def Info: ../figs/kmeans_basic.png  used on input line 389.
+Package pdftex.def Info: ../figs/kmeans_basic.png  used on input line 500.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
-<../figs/kmeans_good.png, id=166, 462.528pt x 346.896pt>
+<../figs/kmeans_good.png, id=246, 462.528pt x 346.896pt>
 File: ../figs/kmeans_good.png Graphic file (type png)
 <use ../figs/kmeans_good.png>
-Package pdftex.def Info: ../figs/kmeans_good.png  used on input line 392.
+Package pdftex.def Info: ../figs/kmeans_good.png  used on input line 503.
 (pdftex.def)             Requested size: 234.8775pt x 176.15768pt.
-[8 <../figs/kmeans_basic.png>]
+ [9 <../figs/kmeans_basic.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 395.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 395.
+(hyperref)                removing `math shift' on input line 506.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 412.
+(hyperref)                removing `math shift' on input line 506.
+
+<../figs/q_5_1_kmeans.pdf, id=254, 462.52798pt x 346.89601pt>
+File: ../figs/q_5_1_kmeans.pdf Graphic file (type pdf)
+<use ../figs/q_5_1_kmeans.pdf>
+Package pdftex.def Info: ../figs/q_5_1_kmeans.pdf  used on input line 529.
+(pdftex.def)             Requested size: 469.75502pt x 352.33656pt.
+
+Overfull \hbox (25.00003pt too wide) in paragraph at lines 529--529
+ [] 
+ []
+
+[10 <../figs/kmeans_good.png>]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 538.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 412.
+(hyperref)                removing `math shift' on input line 538.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 412.
+(hyperref)                removing `math shift' on input line 538.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 412.
+(hyperref)                removing `math shift' on input line 538.
 
-[9 <../figs/kmeans_good.png>]
-<../figs/density.png, id=199, 462.528pt x 346.896pt>
+[11 <../figs/q_5_1_kmeans.pdf>]
+<../figs/q5_2_Kmeans_errors.pdf, id=301, 462.52798pt x 346.89601pt>
+File: ../figs/q5_2_Kmeans_errors.pdf Graphic file (type pdf)
+<use ../figs/q5_2_Kmeans_errors.pdf>
+Package pdftex.def Info: ../figs/q5_2_Kmeans_errors.pdf  used on input line 565.
+(pdftex.def)             Requested size: 469.75502pt x 352.33656pt.
+
+Overfull \hbox (25.00003pt too wide) in paragraph at lines 565--565
+ [] 
+ []
+
+<../figs/density.png, id=302, 462.528pt x 346.896pt>
 File: ../figs/density.png Graphic file (type png)
 <use ../figs/density.png>
-Package pdftex.def Info: ../figs/density.png  used on input line 430.
+Package pdftex.def Info: ../figs/density.png  used on input line 573.
 (pdftex.def)             Requested size: 230.18253pt x 172.63771pt.
-<../figs/density2.png, id=200, 462.528pt x 346.896pt>
+<../figs/density2.png, id=303, 462.528pt x 346.896pt>
 File: ../figs/density2.png Graphic file (type png)
 <use ../figs/density2.png>
-Package pdftex.def Info: ../figs/density2.png  used on input line 430.
+Package pdftex.def Info: ../figs/density2.png  used on input line 573.
 (pdftex.def)             Requested size: 230.18253pt x 172.63771pt.
- [10 <../figs/density.png> <../figs/density2.png>]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 476.
- [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 476.
+[12 <../figs/q5_2_Kmeans_errors.pdf>] [13 <../figs/density.png> <../figs/density2.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 669--669
+
+ []
+
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 678.
+(./../code/naive_bayes.py [14]) (./../code/knn.py) (./../code/random_forest.py [15]) (./../code/kmeans.py)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 699.
+ [16]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 699.
  (./a2.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 476.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 476.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 476.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 699.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 699.
+
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 699.
  ) 
 Here is how much of TeX's memory you used:
- 20706 strings out of 492649
- 391620 string characters out of 6129622
- 473509 words of memory out of 5000000
- 24314 multiletter control sequences out of 15000+600000
- 541302 words of font info for 66 fonts, out of 8000000 for 9000
+ 21348 strings out of 492649
+ 398247 string characters out of 6129622
+ 494509 words of memory out of 5000000
+ 24848 multiletter control sequences out of 15000+600000
+ 541768 words of font info for 68 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 36i,9n,40p,10465b,802s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb>
-Output written on ./a2.pdf (11 pages, 331473 bytes).
+ 36i,11n,40p,10465b,2391s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt8.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on ./a2.pdf (16 pages, 574336 bytes).
 PDF statistics:
- 373 PDF objects out of 1000 (max. 8388607)
- 261 compressed objects within 3 object streams
- 80 named destinations out of 1000 (max. 500000)
- 196 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 624 PDF objects out of 1000 (max. 8388607)
+ 417 compressed objects within 5 object streams
+ 167 named destinations out of 1000 (max. 500000)
+ 248 words of extra memory for PDF output out of 10000 (max. 10000000)
 

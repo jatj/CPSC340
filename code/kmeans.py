@@ -29,7 +29,8 @@ class Kmeans:
                     means[kk] = X[y==kk].mean(axis=0)
 
             changes = np.sum(y != y_old)
-            # print('Running K-means, changes in cluster assignment = {}'.format(changes))
+            self.means = means
+            # print('Running K-means, changes in cluster assignment = {}, error = {}'.format(changes,self.error(X)))
 
             # Stop if no point changed cluster
             if changes == 0:
@@ -42,3 +43,12 @@ class Kmeans:
         dist2 = euclidean_dist_squared(X, means)
         dist2[np.isnan(dist2)] = np.inf
         return np.argmin(dist2, axis=1)
+    
+    def error(self, X):
+        n, d = X.shape
+        means = self.means
+        y_pred = self.predict(X)
+        pred_means = means[y_pred]
+        dist2 = euclidean_dist_squared(X, pred_means)
+        dist2[np.isnan(dist2)] = np.inf
+        return np.min(dist2, axis=1).sum()

@@ -4,6 +4,7 @@ import pickle
 import argparse
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
 
 # sklearn imports
@@ -22,7 +23,7 @@ from naive_bayes import NaiveBayes
 from decision_stump import DecisionStumpErrorRate, DecisionStumpEquality, DecisionStumpInfoGain
 from decision_tree import DecisionTree
 from random_tree import RandomTree
-# from random_forest import RandomForest
+from random_forest import RandomForest
 
 from kmeans import Kmeans
 from sklearn.cluster import DBSCAN
@@ -82,7 +83,6 @@ if __name__ == '__main__':
 
         plt.plot(depths, trainingErrors, label="Training")
         plt.plot(depths, testErrors, label="Testing", linestyle=":", linewidth=3)
-
         plt.xlabel("Depth of tree")
         plt.ylabel("Error")
         plt.legend()
@@ -128,9 +128,22 @@ if __name__ == '__main__':
             plt.plot(depths, trainingErrors, label="Training")
             plt.plot(depths, validationErrors, label="Validation", linestyle=":", linewidth=3)
 
+            diffError = validationErrors - trainingErrors
+            aveError = (validationErrors + trainingErrors)/2
+            stats_rows = ["gap","validation", "train", "average"]
+            stats_cols = range(1,16)
+            stats = pd.DataFrame(index=stats_rows, columns=stats_cols, data = [
+                diffError,
+                validationErrors,
+                trainingErrors,
+                aveError
+            ])
+            print(stats)
+
             plt.xlabel("Depth of tree")
             plt.ylabel("Error")
             plt.title("Error over depth")
+            plt.legend()
             fname = os.path.join("..", "figs", "q1_2_training_validation_{}.pdf".format(i+1))
             plt.savefig(fname)
             plt.clf()
@@ -197,38 +210,40 @@ if __name__ == '__main__':
         y = dataset['y']
         Xtest = dataset['Xtest']
         ytest = dataset['ytest']
+        knnModels = []
+        knnScikitModels = []
 
-        modelKNN_1 = KNN(1)
-        modelKNN_1.fit(X,y)
-        y_pred = modelKNN_1.predict(Xtest)
-        error = np.mean(y_pred != ytest)
-        print("KNN (k=1) error: %.3f" % error)
+        for k in [1,3,10]:
+            print("\n------ K={} -----\n".format(k))
+            
+            modelKNN = KNN(k)
+            modelKNN.fit(X,y)
+            y_pred = modelKNN.predict(X)
+            training_error = np.mean(y_pred != y)
+            y_pred = modelKNN.predict(Xtest)
+            test_error = np.mean(y_pred != ytest)
+            print("KNN (k={:d}) training_error: {:.3f}".format(k, training_error))
+            print("KNN (k={:d}) test_error: {:.3f}".format(k,test_error))
 
-        modelKNN_3 = KNN(3)
-        modelKNN_3.fit(X,y)
-        y_pred = modelKNN_3.predict(Xtest)
-        error = np.mean(y_pred != ytest)
-        print("KNN (k=3) error: %.3f" % error)
+            modelKNN_Scikit = KNeighborsClassifier(n_neighbors=k)
+            modelKNN_Scikit.fit(X,y)
+            y_pred = modelKNN_Scikit.predict(X)
+            training_error = np.mean(y_pred != y)
+            y_pred = modelKNN_Scikit.predict(Xtest)
+            test_error = np.mean(y_pred != ytest)
+            print("KNN Scikit (k={:d}) training_error: {:.3f}".format(k, training_error))
+            print("KNN Scikit (k={:d}) test_error: {:.3f}".format(k, test_error))
 
-        modelKNN_10 = KNN(10)
-        modelKNN_10.fit(X,y)
-        y_pred = modelKNN_10.predict(Xtest)
-        error = np.mean(y_pred != ytest)
-        print("KNN (k=10) error: %.3f" % error)
+            knnModels.append(modelKNN)
+            knnScikitModels.append(modelKNN_Scikit)
 
-        modelKNN_Scikit = KNeighborsClassifier(n_neighbors=1)
-        modelKNN_Scikit.fit(X,y)
-        y_pred = modelKNN_10.predict(Xtest)
-        error = np.mean(y_pred != ytest)
-        print("KNN Scikit (k=1) error: %.3f" % error)
-
-        utils.plotClassifier(modelKNN_1,X,y)
+        utils.plotClassifier(knnModels[0],X,y)
         fname = os.path.join("..", "figs", "q3_3_myKNN.pdf")
         plt.savefig(fname)
         print("\nFigure saved as '%s'" % fname)
         plt.clf()
 
-        utils.plotClassifier(modelKNN_Scikit,X,y)
+        utils.plotClassifier(knnScikitModels[0],X,y)
         fname = os.path.join("..", "figs", "q3_3_scikitKNN.pdf")
         plt.savefig(fname)
         print("\nFigure saved as '%s'" % fname)
@@ -255,6 +270,12 @@ if __name__ == '__main__':
 
         print("Decision tree info gain")
         evaluate_model(DecisionTree(max_depth=np.inf, stump_class=DecisionStumpInfoGain))
+        print("Random tree")
+        evaluate_model(RandomTree(np.inf))
+        print("Random forest")
+        evaluate_model(RandomForest(np.inf,50))
+        print("Random forest scikit")
+        evaluate_model(RandomForestClassifier(n_estimators=50))
 
 
 
@@ -272,12 +293,50 @@ if __name__ == '__main__':
 
     elif question == '5.1':
         X = load_dataset('clusterData.pkl')['X']
+        lowestError = np.inf
+        lowestKMeans = None
+        for i in range(50):
+            model = Kmeans(k=4)
+            model.fit(X)
+            error = model.error(X)
+            if error < lowestError:
+                lowestError = error
+                lowestKMeans = model
+    
+        print("KMeans lowest error: {}".format(lowestError))
+        y = lowestKMeans.predict(X)
+        plt.scatter(X[:,0], X[:,1], c=y, cmap="jet")
 
+        fname = os.path.join("..", "figs", "q_5_1_kmeans.pdf")
+        plt.title("Cluster Plot")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
 
 
     elif question == '5.2':
         X = load_dataset('clusterData.pkl')['X']
+        lowestErrors = []
+        ks = range(1,11)
+        for k in ks:
+            lowestError = np.inf
+            for i in range(50):
+                model = Kmeans(k=k)
+                model.fit(X)
+                error = model.error(X)
+                if error < lowestError:
+                    lowestError = error
+                    lowestKMeans = model
+            lowestErrors.append(lowestError)
 
+
+        plt.plot(ks, lowestErrors, label="Minimum errors")
+        plt.xlabel("K")
+        plt.ylabel("Error")
+        plt.legend()
+        plt.title("Kmeans errors over k")
+        fname = os.path.join("..", "figs", "q5_2_Kmeans_errors.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
 
 
     elif question == '5.3':
