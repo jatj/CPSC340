@@ -197,7 +197,7 @@ if __name__ == '__main__':
         # Scikit learn BernoulliNB
         sciKit_naive_bayes = BernoulliNB()
         sciKit_naive_bayes.fit(X,y)
-        y_pred = model.predict(X_valid)
+        y_pred = sciKit_naive_bayes.predict(X_valid)
         v_error = np.mean(y_pred != y_valid)
         print("Naive Bayes (scikit) validation error: %.3f" % v_error)
     

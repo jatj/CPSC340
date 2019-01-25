@@ -25,8 +25,8 @@ class NaiveBayes:
         p_xy = np.zeros((D, C))
         for i in range(D):
             for j in range(C):
-                givenX = X[y==j]
-                freq = givenX[:,j].sum()
+                xi_given_class_j = X[y==j][:,i]
+                freq = xi_given_class_j.sum()
                 p_xy[i][j] = freq/counts[j]
 
         self.p_y = p_y

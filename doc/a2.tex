@@ -98,7 +98,6 @@ With a depth-2 decision tree, the training and test error are fairly close, so t
 Note: it's OK to reuse code from Assignment 1.
 
 \fig{1}{../figs/q1_1_errors.pdf}
-% JATJ: check
 \ans{
    The training error starts to reach 0 (Overfitting) around depth 8. But the testing error doesn't 
    pass the $0.078\%$ error.
@@ -108,7 +107,6 @@ Note: it's OK to reuse code from Assignment 1.
 \rubric{reasoning:3}
 
 Suppose that we didn't have an explicit test set available. In this case, we might instead use a \emph{validation} set. Split the training set into two equal-sized parts: use the first $n/2$ examples as a training set and the second $n/2$ examples as a validation set (we're assuming that the examples are already in a random order). \blu{What depth of decision tree would we pick to minimize the validation set error? Does the answer change if you switch the training and validation set? How could use more of our data to  estimate the depth more reliably?} \\
-% JATJ: check
 \clearpage
 \begin{figure}[htp]
    \begin{subfigure}[b]{0.5\textwidth} \color{ans}
@@ -132,12 +130,9 @@ Suppose that we didn't have an explicit test set available. In this case, we mig
    \end{subfigure}
 \end{figure}
 \ans{
-   With the two figures above we can see that if we choose a depth of 8 or above to decrease the error, 
-   the classifier will be overfitted, we can see that because the training error goes to 0 and also the 
-   gap between the train and validation error becomes bigger with the increase of the depth. \\ \\
-   And if we choose a lower depth like 3 we will have bigger errors, so we want something in the middle 
-   of those values, a good depth for the decision tree may be around depth 5 or 6, these values also 
-   have a low gap between the training and validation error. \\ \\
+   By looking at the left plot, we can minimize the validation error by choosing either 8 or 9 as 
+   depth of the tree. But if we swap the training and validation sets we minimize the validation error 
+   by choosing a depth of 6. \\ \\
    To estimate the depth more reliable we can do cross-validation with the entire training set.
 }
 
@@ -310,11 +305,13 @@ the calculation of the variable \texttt{p\_xy} is incorrect
 computes the conditional probabilities of these values based on the
 frequencies in the data set. Submit your code and the validation error that you obtain.
 Also, compare your validation error to what you obtain with scikit-learn's implementation, \texttt{BernoulliNB}.} \\ \\
-% JATJ: listings naive_bayes fit, explain
 \ans{
-   The Naive Bayes classifier we implemented has a validation error of $0.790$, the Naive Bayes classifier 
-   from scikit-learn (\texttt{BernoulliNB}) also has a validation error of $0.790$. \\ \\
-   See \hyperref[appendix:NaiveBayes]{\textbf{Appendix A}} for the implementation of \texttt{Naive Bayes fit()}.\\
+   The Naive Bayes classifier implemented has a validation error of $0.188$, the Naive Bayes classifier 
+   from scikit-learn (\texttt{BernoulliNB}) has a validation error of $0.187$. \\ \\
+   See the following code for the implementation of \texttt{Naive Bayes fit()}.\\
+   \begin{center}
+      \lstinputlisting[firstline=11,lastline=34]{../code/naive_bayes.py}
+  \end{center}
 }
 
 \subsection{Runtime of Naive Bayes for Discrete Data}
@@ -341,9 +338,10 @@ You can implement the training phase of a naive Bayes classifier in this setup i
  \blu{What is the cost of classifying $t$ test examples with the model and this way of computing the predictions?} \\ \\
 % JATJ: check
 \ans{
-   The cost of classifying $t$ test examples is $O(tdk)$, because for each test sample we have to get
-   $p(x_{ij}$ which will be done in $d$ time and then $k$ times for the number of classes to get 
-   the class with more probability to be. So the whole cost of the prediction will be $O(tdk)$.
+   The cost of classifying $t$ test examples is $O(tdck)$, because for each test sample we have to get
+   $p(x_{ij}$ which will be done in $d$ time and then $c$ to calculate the feature with all of its 
+   possible values, finally we will repeat this process $k$ times for the number of classes. 
+   So the whole cost of the prediction will be $O(tdck)$.
 }
 
 \section{K-Nearest Neighbours}
@@ -359,7 +357,10 @@ You can also use \texttt{utils.euclidean\string_dist\string_squared}, which comp
 \enum{
 \item Write the \texttt{predict} function. \\
 \ans{
-   See \hyperref[appendix:KNN]{\textbf{Appendix B}} for the implementation of \texttt{K-Nearest Neighbours predict()}.
+   See the following code for the implementation of \texttt{K-Nearest Neighbours predict()}.
+   \begin{center}
+      \lstinputlisting[firstline=17,lastline=28]{../code/knn.py}
+  \end{center}
 }
 \item Report  the training and test error obtained on the \emph{citiesSmall} dataset for $k=1$, $k=3$, and $k=10$. How do these numbers compare to what you got with the decision tree? \\
 \ans{
@@ -375,6 +376,7 @@ You can also use \texttt{utils.euclidean\string_dist\string_squared}, which comp
    \end{tabular}
    \end{center}
    \normalsize
+   The raining and testing errors using KNN are much smaller than with the decision tree
 }
 \item Hand in the plot generated by \texttt{utils.plotClassifier} on the \emph{citiesSmall} dataset for $k=1$, using both your implementation of KNN and the KNeighborsClassifier from scikit-learn.
 \begin{figure}[htp]
@@ -401,7 +403,7 @@ You can also use \texttt{utils.euclidean\string_dist\string_squared}, which comp
 \clearpage
 \item Why is the training error $0$ for $k=1$? \\
 \ans{
-   Because the \texttt{predict()} function is giving the values of the closest neighbour and not 
+   Because the \texttt{predict()} function is giving the exact values of the closest neighbour and not 
    averaging between several neighbors.
 }
 \item If you didn't have an explicit test set, how would you choose $k$? \\
@@ -444,7 +446,10 @@ using the information gain splitting criterion. You will notice that the model o
 \item Create a class \texttt{RandomForest} in a file called \texttt{random\string_forest.py} that takes in hyperparameters \texttt{num\string_trees} and \texttt{max\string_depth} and
 fits \texttt{num\string_trees} random trees each with maximum depth \texttt{max\string_depth}. For prediction, have all trees predict and then take the mode. \\
 \ans{
-   See \hyperref[appendix:RandomForest]{\textbf{Appendix C}} for the implementation of \texttt{RandomForest}.\\
+   See the following code for the implementation of \texttt{RandomForest}.\\
+   \begin{center}
+      \lstinputlisting[firstline=4,lastline=29]{../code/random_forest.py}
+  \end{center}
 }
 \item Using 50 trees, and a max depth of $\infty$, report the training and testing error. Compare this to what we got with a single \texttt{DecisionTree} and with a single \texttt{RandomTree}. Are the results what you expected? Discuss. \\
 \ans{
@@ -453,8 +458,8 @@ fits \texttt{num\string_trees} random trees each with maximum depth \texttt{max\
    \begin{center}
    \begin{tabular}{SSSS} \toprule
       {} & {DecisionTree} & {RandomTree} & {RandomForest} \\ \midrule
-      {Training error} & 0.000 &  &  0.000 \\ 
-      {Test error} & 0.367 & 0.466 & 0.193 \\ \bottomrule
+      {Training error} & 0.000 & 0.133 &  0.000 \\ 
+      {Test error} & 0.367 & 0.451 & 0.193 \\ \bottomrule
    \end{tabular}
    \end{center}
    \normalsize
@@ -515,11 +520,14 @@ f(w_1,w_2,\dots,w_k,y_1,y_2,\dots,y_n) = \sum_{i=1}^n \norm{x_i - w_{y_i}}_2^2 =
  \blu{\enum{
  \item In the \texttt{kmeans.py} file, add a new function called \texttt{error} that takes the same input as the \texttt{predict} function but that returns the value of this above objective function. \\
    \ans{
-      See \hyperref[appendix:k-Means]{\textbf{Appendix D}} for the implementation of \texttt{$K$-Means error()}.\\
+      See the following code for the implementation of \texttt{$K$-Means error()}.\\
+      \begin{center}
+         \lstinputlisting[firstline=46,lastline=54]{../code/kmeans.py}
+     \end{center}
    }
  \item What trend do you observe if you print the value of this error after each iteration of the $k$-means algorithm? \\ 
    \ans{
-      The error increases after each iteration
+      The error decreases after each iteration, as well as the number of changes in the cluster assignment.
    }
  \item Using the code from question 5 in \texttt{main.py} (modify if needed), output the clustering obtained by running $k$-means 50 times (with $k=4$) and taking the one with the lowest error. Submit your plot. \\
    \ans{
@@ -649,6 +657,7 @@ Even though we know that each object was generated from one of four clusters (an
 \item What is the effect of $k$ in KNN on the two parts (training error and approximation error) of the fundamental trade-off. Hint: think about the extreme values. \\
 %JATJ: check
 \ans{
+   As k grows the training error gets lower and the approximation error increases.
 }
 \item Suppose we want to classify whether segments of raw audio represent words or not. What is an easy way to make our classifier invariant to small translations of the raw audio? \\
 \ans{
@@ -665,35 +674,9 @@ Even though we know that each object was generated from one of four clusters (an
 \item In $k$-means clustering the clusters are guaranteed to be convex regions. Are the areas that are given the same label by KNN also convex? \\
 %JATJ: check
 \ans{
+   No, the areas given by KNN not necessarily be convex. Because the data points are matched by distance,
+   and in kmeans they are matched if they are inside an circular area with epsilon value. So the 
+   data points in a kluster with KNN can't always create a convex area.
 }
 }
-
-\bookmarksetup{startatroot}
-
-\appendix
-
-\section{Appendix: Naive Bayes fit()}
-\label{appendix:NaiveBayes}
-\begin{center}
-    \lstinputlisting[firstline=11,lastline=34]{../code/naive_bayes.py}
-\end{center}
-
-\section{Appendix: KNN predict()}
-\label{appendix:KNN}
-\begin{center}
-    \lstinputlisting[firstline=17,lastline=28]{../code/knn.py}
-\end{center}
-
-\section{Appendix: RandomForest}
-\label{appendix:RandomForest}
-\begin{center}
-    \lstinputlisting[firstline=4,lastline=29]{../code/random_forest.py}
-\end{center}
-
-\section{Appendix: k-Means error()}
-\label{appendix:k-Means}
-\begin{center}
-    \lstinputlisting[firstline=46,lastline=54]{../code/kmeans.py}
-\end{center}
-
 \end{document}
