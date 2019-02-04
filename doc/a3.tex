@@ -8,9 +8,13 @@
 \usepackage{graphicx}
 \usepackage{parskip}
 \usepackage{amssymb}
-\usepackage{nicefrac}
-\usepackage{listings} % For displaying code
-\usepackage{algorithm2e} % pseudo-code
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{bookmark}
+\usepackage{hyperref}
+\usepackage[procnames]{listings}
 
 \def\rubric#1{\gre{Rubric: \{#1\}}}{}
 
@@ -22,6 +26,25 @@
 \definecolor{red}{rgb}{1,0,0}
 \def\red#1{{\color{red}#1}}
 \def\norm#1{\|#1\|}
+\definecolor{ans}{rgb}{0,.5,0}%{0.545,0.27,0.074}
+\def\ans#1{{\color{ans}#1}}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
+
+% Configuration
+\usepackage[font={color=ans,bf},figurename=Fig.,labelfont={it}]{caption}
+\lstset{
+    language=Python, 
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{keywords},
+    commentstyle=\color{comments},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    identifierstyle=\color{green},
+    procnamekeys={def,class}
+}
 
 % Math
 \def\R{\mathbb{R}}
@@ -138,9 +161,30 @@ Note: in \texttt{main.py} you are welcome to combine this code with your code fr
 Using our standard supervised learning notation ($X$, $y$, $w$)
 express the following functions in terms of vectors, matrices, and norms (there should be no summations or maximums).
 \blu{\enum{
-\item $\max_{i \in \{1,2,\dots,n\}}  |w^Tx_i - y_i|$.
+\item $\max_{i \in \{1,2,\dots,n\}}  |w^Tx_i - y_i|$. \\
+\ans{
+    \[
+        ||Xw - y||_{\infty}
+    \]
+}
 \item $\sum_{i=1}^n v_i(w^Tx_i  - y_i)^2 + \frac{\lambda}{2}\sum_{j=1}^d w_j^2$.
+\ans{
+    \[
+        \text{let } V  \text{ be a } n \times n \text{ diagonal matrix with } v_i \text{ along the diagonal}
+    \]
+    \[
+        || V (Xw  - y)^2 ||_1 + \frac{\lambda}{2} || w ||_2^2
+    \]
+}
 \item $\left(\sum_{i=1}^n |w^Tx_i - y_i|\right)^2 +  \half\sum_{j=1}^{d} \lambda_j|w_j|$.
+\ans{
+    \[
+        \text{let } \Lambda  \text{ be a } d \times d \text{ diagonal matrix with } \lambda_i \text{ along the diagonal}
+    \]
+    \[
+        ||Xw - y||_{1}^2 + \half ||\Lambda w||_1
+    \]
+}
 }}
 Note that in part 2 we give a \emph{weight} $v_i$ to each training example \red{and the value $\lambda$ is a non-negative scalar}, whereas in part 3 we are regularizing the parameters with different weights $\lambda_j$.
 You can use $V$ to denote a diagonal matrix that has the values $v_i$ along the diagonal, and $\Lambda$ as a diagonal matrix that has the $\lambda_j$ values along the diagonal. You can assume that all the $v_i$ and $\lambda_i$ values are non-negative. 
@@ -151,9 +195,89 @@ You can use $V$ to denote a diagonal matrix that has the values $v_i$ along the 
 Write finding a minimizer $w$ of the functions below as a system of linear equations (using vector/matrix notation and simplifying as much as possible). Note that all the functions below are convex  so finding a $w$ with $\nabla f(w) = 0$ is sufficient to minimize the functions (but show your work in getting to this point).
 
 \blu{\enum{
-\item $f(w) = \frac{1}{2}\norm{w-v}^2$ (projection of $v$ onto real space).
-\item $f(w)= \frac{1}{2}\norm{Xw - y}^2 + \frac{1}{2}w^T\Lambda w$ (least squares with weighted regularization).
-\item $f(w) = \frac{1}{2}\sum_{i=1}^n v_i (w^Tx_i - y_i)^2 + \frac{\lambda}{2}\norm{w-w^0}^2$ (weighted least squares shrunk towards non-zero $w^0$).
+\item $f(w) = \half \norm{w-v}^2$ (projection of $v$ onto real space).
+\ans{
+    \[
+        f(w) = \half (w^Tw - 2w^Tv + v^Tv)
+    \]
+    \[
+        f(w) = \half w^Tw - w^Tv + \half v^Tv
+    \]
+    \[
+        \nabla f(w) = w - v + 0
+    \]
+    \[
+        \nabla f(w) = 0 \rightarrow w - v
+    \]
+    \[
+        w = v
+    \]
+}
+\item $f(w)= \half \norm{Xw - y}^2 + \half w^T\Lambda w$ (least squares with weighted regularization).
+\ans{
+    \[
+        f(w) = \half (w^TX^TXw - 2w^TX^Ty + y^Ty) + \half w^T \Lambda w
+    \]
+    let $A = X^TX$ \\
+    let $B = X^Ty$ \\
+    let $C = y^Ty$ \\
+    \[
+        f(w) = \half w^TAw - w^TB + C) + \half w^T \Lambda w
+    \]
+    \[
+        \nabla f(w) = Aw - B + 0 + \Lambda w
+    \]
+    \[
+        \nabla f(w) = 0 \rightarrow Aw + \Lambda w = B
+    \]
+    \[
+        (A + \Lambda )w = B
+    \]
+    \[
+        w = (A + \Lambda )^{-1}B
+    \]
+    \[
+        w = (X^TX + \Lambda)^{-1} X^Ty
+    \]
+}
+% JATJ: Check
+\item $f(w) = \half \sum_{i=1}^n v_i (w^Tx_i - y_i)^2 + \frac{\lambda}{2}\norm{w-w^0}^2$ (weighted least squares shrunk towards non-zero $w^0$).
+\ans{
+    \[
+        \half || V (Xw - y)^2 ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
+    \]
+    \[
+        \half || (VXw - Vy) (Xw - y) ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
+    \]
+    \[
+        \half || w^T(VX)^TXw - w^T(VX)^Ty - w^TX^T(VY) + y^TVY || + \frac{\lambda}{2}(w^Tw - 2w^Tw^0 + w^{0T}w^0)
+    \]
+    let $A = (VX)^TX$ \\
+    let $B = (VX)^Ty$ \\
+    let $C = X^T(VY)$ \\
+    let $D = y^TVy$ \\
+    \[
+        \half || w^TAw - w^TB - w^TC + D || + \frac{\lambda}{2}||w^Tw - 2w^Tw^0 + w^{0T}w^0||
+    \]
+    \[
+        || \half w^TAw - \half w^TB - \half w^TC + \half D + \frac{\lambda}{2} w^Tw - \lambda w^Tw^0 + \frac{\lambda}{2} w^{0T}w^0 ||
+    \]
+    \[
+        \nabla f(w) = Aw - \half B - \half C + 0 + \lambda w - \lambda w^0 + 0
+    \]
+    \[
+        \nabla f(w) = 0 \rightarrow Aw + \lambda w = \half B + \half C + \lambda w^0 
+    \]
+    \[
+        \nabla f(w) = 0 \rightarrow (A + \lambda I) w = \half B + \half C + \lambda w^0 
+    \]
+    \[
+        w = (A + \lambda I)^{-1} (\half B + \half C + \lambda w^0 )
+    \]
+    \[
+        w = (A + \lambda I)^{-1} (\half (VX)^Ty + \half X^T(VY) + \lambda w^0 )
+    \]
+}
 }}
 Above we assume that $v$ and $w^0$ are $d$ by $1$ vectors (in part 3 $v$ is a vector of length $n$ by 1), and $\Lambda$ is a $d$ by $d$ diagonal matrix (with positive entries along the diagonal). You can use $V$ as a diagonal matrix containing the $v_i$ values along the diagonal.
 
@@ -189,6 +313,12 @@ Apply this model to the data containing outliers, setting $v = 1$ for the first
 $400$ data points and $v = 0.1$ for the last $100$ data points (which are the outliers).
 \blu{Hand in your code and the updated plot}.
 
+\begin{center}
+    \lstinputlisting[firstline=14,lastline=20]{../code/linear_model.py}
+\end{center}
+
+\centerfig{1}{../figs/weighted_least_squares_outliers.pdf}
+
 \subsection{Smooth Approximation to the L1-Norm}
 \rubric{reasoning:3}
 
@@ -206,6 +336,12 @@ f(w) {=} \sum_{i=1}^n  \log\left(\exp(w^Tx_i - y_i) + \exp(y_i - w^Tx_i)\right).
 \]
 which is smooth but less sensitive to outliers than the squared error. \blu{Derive
  the gradient $\nabla f$ of this function with respect to $w$. You should show your work but you do \underline{not} have to express the final result in matrix notation.}
+% JATJ: Check
+\ans{
+    \[
+        \nabla f(w) = \frac{x_i\exp(w^Tx_i - y_i) - x_i\exp(y_i - w^Tx_i)}{\exp(w^Tx_i - y_i) + \exp(y_i - w^Tx_i)}
+    \]
+}
 
 \subsection{Robust Regression}
 \rubric{code:3}
@@ -222,6 +358,13 @@ The only part missing is the function and gradient calculation inside the \textt
 \blu{Modify \texttt{funObj} to implement the objective function and gradient based on the smooth
 approximation to the absolute value function (from the previous section). Hand in your code, as well
 as the plot obtained using this robust regression approach.}
+
+\begin{center}
+    \lstinputlisting[firstline=40,lastline=56]{../code/linear_model.py}
+\end{center}
+
+\centerfig{1}{../figs/least_squares_robust.pdf}
+
 
 
 \section{Linear Regression and Nonlinear Bases}
@@ -263,6 +406,12 @@ and the updated training/test error.}
 
 Hint: recall that adding a bias $w_0$ is equivalent to adding a column of ones to the matrix $X$. Don't forget that you need to do the same transformation in the \texttt{predict} function.
 
+\begin{center}
+    \lstinputlisting[firstline=59,lastline=70]{../code/linear_model.py}
+\end{center}
+
+\centerfig{1}{../figs/least_squares_bias.pdf}
+
 
 \subsection{Polynomial Basis}
 \rubric{code:4}
@@ -284,25 +433,94 @@ and fit a least squares model based on it.
 
 Note: you should write the code yourself; don't use a library like sklearn's \texttt{PolynomialFeatures}.
 
+\begin{center}
+    \lstinputlisting[firstline=72,lastline=93]{../code/linear_model.py}
+\end{center}
+
+\centerfig{1}{../figs/least_squares_poly.pdf}
+
 
 \section{Very-Short Answer Questions}
 \rubric{reasoning:7}
 
 \begin{enumerate}
-\item Suppose that a training example is global outlier, meaning it is really far from all other data points. How is the cluster assignment of this example by $k$-means? And how is it set by density-based clustering?
-\item Why do need random restarts for $k$-means but not for density-based clustering?
-\item Can hierarchical clustering find non-convex clusters?
-\item For model-based outlier detection, list an example method and problem with identifying outliers using this method.
-\item For graphical-based outlier detection, list an example method and problem with identifying outliers using this method.
-\item For supervised outlier detection, list an example method and problem with identifying outliers using this method.
-\item If we want to do linear regression with 1 feature, explain why it would or would not make sense to use gradient descent to compute the least squares solution.
-\item Why do we typically add a column of $1$ values to $X$ when we do linear regression? Should we do this if we're using decision trees?
-\item If a function is convex, what does that say about stationary points of the function? Does convexity imply that a stationary points exists?
-\item Why do we need gradient descent for the robust regression problem, as opposed to just using the normal equations? Hint: it is NOT because of the non-differentiability. Recall that we used gradient descent even after smoothing away the non-differentiable part of the loss.
-\item What is the problem with having too small of a learning rate in gradient descent?
-\item What is the problem with having too large of a learning rate in gradient descent?
-\item What is the purpose of the log-sum-exp function and how is this related to gradient descent?
-\item What type of non-linear transform might be suitable if we had a periodic function?
+\item Suppose that a training example is global outlier, meaning it is really far from all other data points. How is the cluster assignment of this example by $k$-means? And how is it set by density-based clustering?\\
+\ans{
+    $k$-means will cluster it to the "nearest" cluster it founds whereas density-based clustering 
+    will not assigned it to any cluster, because it may not be at the $eps$ distance of any other 
+    training point.
+}
+\item Why do need random restarts for $k$-means but not for density-based clustering?\\
+\ans{
+    Because $k$-means its severely affected by the initial position of the mean points, it may find 
+    different clusters if the two mean points are initialized pretty close. In the other hand 
+    density-based clustering do not depend on any position, but the hyperparameters $eps$ and 
+    $min_pts$. If those hyperparameters do not change, the results of the density-based clustering 
+    will be the same on every run.
+}
+% JATJ: Check
+\item Can hierarchical clustering find non-convex clusters?\\
+\ans{
+    No, because it uses DBSCAN, and in DBSCAN all the clusters will be convex. So the different clusters 
+    at different hierarchies will always be convex.
+}
+\item For model-based outlier detection, list an example method and problem with identifying outliers using this method.\\
+\ans{
+    An example method will be using the z-score $z_i = \frac{x_i - \mu}{\sigma}$, to calculate the 
+    number of standard deviations away from the mean. The problem with this method is that $ \mu \and 
+    \sigma$ are sensitive to outliers, so maybe an outlier would move so much the $ \mu $ that we will 
+    not identify it correctly as an outlier.
+}
+\item For graphical-based outlier detection, list an example method and problem with identifying outliers using this method.\\
+\ans{
+    An example method will be using an scatterplot to visualize the data set and decide what points 
+    are outliers. The problem of this method arises when the dimension of the feature grows. Because it 
+    is not easy to visualize data in more than $3d$, the method may have problems with datasets with 
+    high number of features.
+}
+\item For supervised outlier detection, list an example method and problem with identifying outliers using this method.\\
+\ans{
+    We can use random forests to detect outliers, the problem with this is that we need to either 
+    add outliers to the training set or first identify some outliers using another detection method. 
+    Ahd then create the training set with the labels of outlier and not-outlier.
+}
+\item If we want to do linear regression with 1 feature, explain why it would or would not make sense to use gradient descent to compute the least squares solution.\\
+\ans{
+    By using just the normal equations the model is not robust enough to detect outliers so it may 
+    not be a great model to predict the data.
+}
+% JATJ: Check
+\item Why do we typically add a column of $1$ values to $X$ when we do linear regression? Should we do this if we're using decision trees?\\
+\ans{
+    To add a \emph{bias} or \emph{intercept} to the model.
+}
+\item If a function is convex, what does that say about stationary points of the function? Does convexity imply that a stationary points exists?\\
+\ans{
+    If a function is convex then every stationary point will be a global minima. And if the function is 
+    convex will always have stationary points.
+}
+% JATJ: Check
+\item Why do we need gradient descent for the robust regression problem, as opposed to just using the normal equations? Hint: it is NOT because of the non-differentiability. Recall that we used gradient descent even after smoothing away the non-differentiable part of the loss.\\
+\ans{
+}
+\item What is the problem with having too small of a learning rate in gradient descent?\\
+\ans{
+    It may take a lot of time to converge to the minima, because it will approximate to it at a 
+    slow pace.
+}
+\item What is the problem with having too large of a learning rate in gradient descent?\\
+\ans{
+    It may oscillate in the function while approximating to the minima, which will also make longer 
+    the time of convergence.
+}
+% JATJ: Check
+\item What is the purpose of the log-sum-exp function and how is this related to gradient descent?\\
+\ans{
+}
+\item What type of non-linear transform might be suitable if we had a periodic function?\\
+\ans{
+    A trigonometric transform will help with the periodic function.
+}
 \end{enumerate}
 
 \end{document}

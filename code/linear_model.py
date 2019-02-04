@@ -13,10 +13,11 @@ class LeastSquares:
         return X@self.w
 
 # Least squares where each sample point X has a weight associated with it.
-class WeightedLeastSquares(LeastSquares): # inherits the predict() function from LeastSquares
+# inherits the predict() function from LeastSquares
+class WeightedLeastSquares(LeastSquares): 
     def fit(self,X,y,z):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        # (zX)^TX w = 0.5( (zX)^Ty + X^T(zy) )
+        self.w = solve((z@X).T@X, 0.5*((z@X).T@y +  X.T@(z@y)))
 
 class LinearModelGradient(LeastSquares):
 
@@ -37,14 +38,21 @@ class LinearModelGradient(LeastSquares):
         self.w, f = findMin(self.funObj, self.w, 100, X, y)
 
     def funObj(self,w,X,y):
-
-        ''' MODIFY THIS CODE '''
+        n, d = X.shape
         # Calculate the function value
-        f = 0.5*np.sum((X@w - y)**2)
+        f = np.sum(np.log(np.exp(X@w - y) + np.exp(y - X@w)))
 
         # Calculate the gradient value
-        g = X.T@(X@w-y)
+        g_ = np.zeros((n,d))
+        for i in range(n):
+            exp1 = np.exp(w.T@X[i] - y[i])
+            exp2 = np.exp(y[i] - w.T@X[i])
+            num = (X[i].T@exp1 - X[i].T@exp2)
+            div = exp1 + exp2
+            g_[i] = num/div
 
+        g = np.array(g_.sum(axis=0))
+        
         return (f,g)
 
 
@@ -52,12 +60,14 @@ class LinearModelGradient(LeastSquares):
 class LeastSquaresBias:
 
     def fit(self,X,y):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        w_0 = np.ones(X.shape[0])
+        X_ = np.c_[w_0,X]
+        self.w = solve(X_.T@X_, X_.T@y)
 
     def predict(self, X):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        w_0 = np.ones(X.shape[0])
+        X_ = np.c_[w_0,X]
+        return X_@self.w
 
 # Least Squares with polynomial basis
 class LeastSquaresPoly:
@@ -66,16 +76,17 @@ class LeastSquaresPoly:
         self.p = p
 
     def fit(self,X,y):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        self.leastSquares.fit(self.__polyBasis(X), y)
 
     def predict(self, X):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        return self.leastSquares.predict(self.__polyBasis(X))
 
     # A private helper function to transform any matrix X into
     # the polynomial basis defined by this class at initialization
     # Returns the matrix Z that is the polynomial basis of X.
     def __polyBasis(self, X):
-        ''' YOUR CODE HERE '''
-        raise NotImplementedError()
+        z = np.ones((X.shape[0],1))
+        for i in range(self.p):
+            for j in range(X.shape[1]):
+                z = np.c_[z,X[:,j]**(i+1)]
+        return z
