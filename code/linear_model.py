@@ -16,8 +16,8 @@ class LeastSquares:
 # inherits the predict() function from LeastSquares
 class WeightedLeastSquares(LeastSquares): 
     def fit(self,X,y,z):
-        # (zX)^TX w = 0.5( (zX)^Ty + X^T(zy) )
-        self.w = solve((z@X).T@X, 0.5*((z@X).T@y +  X.T@(z@y)))
+        # X^T z^T X w = X^T z^T y 
+        self.w = solve(X.T@z.T@X, X.T@z.T@y)
 
 class LinearModelGradient(LeastSquares):
 
@@ -38,20 +38,11 @@ class LinearModelGradient(LeastSquares):
         self.w, f = findMin(self.funObj, self.w, 100, X, y)
 
     def funObj(self,w,X,y):
-        n, d = X.shape
         # Calculate the function value
         f = np.sum(np.log(np.exp(X@w - y) + np.exp(y - X@w)))
 
         # Calculate the gradient value
-        g_ = np.zeros((n,d))
-        for i in range(n):
-            exp1 = np.exp(w.T@X[i] - y[i])
-            exp2 = np.exp(y[i] - w.T@X[i])
-            num = (X[i].T@exp1 - X[i].T@exp2)
-            div = exp1 + exp2
-            g_[i] = num/div
-
-        g = np.array(g_.sum(axis=0))
+        g = X.T@((np.exp(X@w - y) - np.exp(y - X@w))/(np.exp(X@w - y) + np.exp(y - X@w)))
         
         return (f,g)
 

@@ -207,7 +207,7 @@ Write finding a minimizer $w$ of the functions below as a system of linear equat
         \nabla f(w) = w - v + 0
     \]
     \[
-        \nabla f(w) = 0 \rightarrow w - v
+        0 =  w - v
     \]
     \[
         w = v
@@ -228,54 +228,49 @@ Write finding a minimizer $w$ of the functions below as a system of linear equat
         \nabla f(w) = Aw - B + 0 + \Lambda w
     \]
     \[
-        \nabla f(w) = 0 \rightarrow Aw + \Lambda w = B
+        0 = Aw + \Lambda w - B
     \]
     \[
         (A + \Lambda )w = B
     \]
     \[
-        w = (A + \Lambda )^{-1}B
-    \]
-    \[
-        w = (X^TX + \Lambda)^{-1} X^Ty
+        (X^TX + \Lambda)w = X^Ty
     \]
 }
-% JATJ: Check
 \item $f(w) = \half \sum_{i=1}^n v_i (w^Tx_i - y_i)^2 + \frac{\lambda}{2}\norm{w-w^0}^2$ (weighted least squares shrunk towards non-zero $w^0$).
 \ans{
     \[
-        \half || V (Xw - y)^2 ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
+        f(w) = \half || (Xw - y)^T V (Xw - y) ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
     \]
     \[
-        \half || (VXw - Vy) (Xw - y) ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
+        f(w) = \half || (V^TXw - V^Ty)^T (Xw - y) ||_1 + \frac{\lambda}{2}\norm{w-w^0}^2
     \]
     \[
-        \half || w^T(VX)^TXw - w^T(VX)^Ty - w^TX^T(VY) + y^TVY || + \frac{\lambda}{2}(w^Tw - 2w^Tw^0 + w^{0T}w^0)
+        f(w) = \half || w^T X^T V^T X w - 2w^T X^T V^T y + y^T V^T y || + \frac{\lambda}{2}(w^T w - 2w^T w^0 + w^{0T} w^0)
     \]
-    let $A = (VX)^TX$ \\
-    let $B = (VX)^Ty$ \\
-    let $C = X^T(VY)$ \\
-    let $D = y^TVy$ \\
+    let $A = X^T V^T X$\\
+    let $B = X^T V^T y$\\
+    let $C = y^T V^T y $\\
     \[
-        \half || w^TAw - w^TB - w^TC + D || + \frac{\lambda}{2}||w^Tw - 2w^Tw^0 + w^{0T}w^0||
-    \]
-    \[
-        || \half w^TAw - \half w^TB - \half w^TC + \half D + \frac{\lambda}{2} w^Tw - \lambda w^Tw^0 + \frac{\lambda}{2} w^{0T}w^0 ||
+        f(w) = \half || w^T A w - 2w^T B + C || + \frac{\lambda}{2}||w^Tw - 2w^Tw^0 + w^{0T}w^0||
     \]
     \[
-        \nabla f(w) = Aw - \half B - \half C + 0 + \lambda w - \lambda w^0 + 0
+        f(w) = || \half w^T A w - w^T B + \half C || + ||\frac{\lambda}{2} w^Tw - \lambda w^Tw^0 + \frac{\lambda}{2} w^{0T}w^0||
     \]
     \[
-        \nabla f(w) = 0 \rightarrow Aw + \lambda w = \half B + \half C + \lambda w^0 
+        \nabla f(w) = Aw - B + 0 + \lambda w - \lambda w^0 + 0
     \]
     \[
-        \nabla f(w) = 0 \rightarrow (A + \lambda I) w = \half B + \half C + \lambda w^0 
+        0 = Aw + \lambda w - B - \lambda w^0 
     \]
     \[
-        w = (A + \lambda I)^{-1} (\half B + \half C + \lambda w^0 )
+        Aw + \lambda w = B - \lambda w^0 
+    \]
+    \[ 
+        (A + \lambda I) w = B + \lambda w^0
     \]
     \[
-        w = (A + \lambda I)^{-1} (\half (VX)^Ty + \half X^T(VY) + \lambda w^0 )
+        (X^T V^T X + \lambda I) w = X^T V^T y + \lambda w^0
     \]
 }
 }}
@@ -336,7 +331,6 @@ f(w) {=} \sum_{i=1}^n  \log\left(\exp(w^Tx_i - y_i) + \exp(y_i - w^Tx_i)\right).
 \]
 which is smooth but less sensitive to outliers than the squared error. \blu{Derive
  the gradient $\nabla f$ of this function with respect to $w$. You should show your work but you do \underline{not} have to express the final result in matrix notation.}
-% JATJ: Check
 \ans{
     \[
         \nabla f(w) = \frac{x_i\exp(w^Tx_i - y_i) - x_i\exp(y_i - w^Tx_i)}{\exp(w^Tx_i - y_i) + \exp(y_i - w^Tx_i)}
@@ -360,7 +354,7 @@ approximation to the absolute value function (from the previous section). Hand i
 as the plot obtained using this robust regression approach.}
 
 \begin{center}
-    \lstinputlisting[firstline=40,lastline=56]{../code/linear_model.py}
+    \lstinputlisting[firstline=40,lastline=48]{../code/linear_model.py}
 \end{center}
 
 \centerfig{1}{../figs/least_squares_robust.pdf}
@@ -489,10 +483,10 @@ Note: you should write the code yourself; don't use a library like sklearn's \te
     By using just the normal equations the model is not robust enough to detect outliers so it may 
     not be a great model to predict the data.
 }
-% JATJ: Check
 \item Why do we typically add a column of $1$ values to $X$ when we do linear regression? Should we do this if we're using decision trees?\\
 \ans{
-    To add a \emph{bias} or \emph{intercept} to the model.
+    To add a \emph{bias} or \emph{intercept} to the model, with this we enable the model to not 
+    necessarily pass through the origin.
 }
 \item If a function is convex, what does that say about stationary points of the function? Does convexity imply that a stationary points exists?\\
 \ans{
@@ -513,9 +507,11 @@ Note: you should write the code yourself; don't use a library like sklearn's \te
     It may oscillate in the function while approximating to the minima, which will also make longer 
     the time of convergence.
 }
-% JATJ: Check
 \item What is the purpose of the log-sum-exp function and how is this related to gradient descent?\\
 \ans{
+    To make an smooth approximation of the $L_\infty$ norm, because minimization of the max function is 
+    much harder, we create an smooth approximation using $log()$ and $exp()$ which will be much similar 
+    to the $max$ function and we can use gradient descent on it.
 }
 \item What type of non-linear transform might be suitable if we had a periodic function?\\
 \ans{
