@@ -80,7 +80,9 @@ if __name__ == "__main__":
         plt.xlabel('# of ratings')
         plt.ylabel('# of users')
         plt.title("Ratings per user 1.1.3.1")
-        plt.show()
+        fname = os.path.join("..", "figs", "ratings_per_user.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
         plt.clf()
         print("\n##################### Q1.1.3.2\n")
         itemRatings = X_binary.getnnz(axis=0)
@@ -90,7 +92,9 @@ if __name__ == "__main__":
         plt.xlabel('# of ratings')
         plt.ylabel('# of items')
         plt.title("Ratings per item 1.1.3.2")
-        plt.show()
+        fname = os.path.join("..", "figs", "ratings_per_item.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
         plt.clf()
         print("\n##################### Q1.1.3.3\n")
         allRatings = X.data
@@ -98,7 +102,9 @@ if __name__ == "__main__":
         plt.xlabel('# of stars')
         plt.ylabel('# of ratings')
         plt.title("Ratings 1.1.3.3")
-        plt.show()
+        fname = os.path.join("..", "figs", "ratings.pdf")
+        plt.savefig(fname)
+        print("\nFigure saved as '%s'" % fname)
         plt.clf()
 
     elif question == "1.2":
@@ -140,16 +146,16 @@ if __name__ == "__main__":
             print(knnIDs)
             print(knDistances)
             print(knnLinks)
-            return knnIndices
+            return knnIndices, knnIDs
 
         print("\n##################### Q1.2.1\n")
-        knnEuclideanNeighbors = doKNN(X_filtered_T,grill_brush_vec_T,"euclidean")
+        knnEuclideanNeighbors, knnEuclideanNeighborsIDs = doKNN(X_filtered_T,grill_brush_vec_T,"euclidean")
 
         print("\n##################### Q1.2.2\n")
-        knnNormalizedEuclideanNeighbors = doKNN(normalize(X_filtered_T),grill_brush_vec_T,"euclidean")
+        knnNormalizedEuclideanNeighbors, knnNormalizedEuclideanNeighborsIDs = doKNN(normalize(X_filtered_T),grill_brush_vec_T,"euclidean")
 
         print("\n##################### Q1.2.3\n")
-        knnCosineNeighbors = doKNN(X_filtered_T,grill_brush_vec_T,"cosine")
+        knnCosineNeighbors, knnCosineNeighborsIDs = doKNN(X_filtered_T,grill_brush_vec_T,"cosine")
 
 
         # YOUR CODE HERE FOR Q1.3
@@ -157,16 +163,16 @@ if __name__ == "__main__":
         print("\n##################### Q1.3\n")
         # Euclidean reviews
         cols = np.arange(X.shape[1])
-        filterknnEuclidean = np.where(np.logical_not(np.in1d(cols, knnEuclideanNeighbors, invert=True)))[0]
-        X_knnEuclideanSum = X[:, filterknnEuclidean].sum(axis=0)
+        X_knnEuclideanSum = X_binary[:, knnEuclideanNeighbors].sum(axis=0)
         print("Euclidean reviews:")
+        print(knnEuclideanNeighborsIDs)
         print(X_knnEuclideanSum)
 
         # Cosine reviews
         cols = np.arange(X.shape[1])
-        filterknnCosine = np.where(np.logical_not(np.in1d(cols, knnCosineNeighbors, invert=True)))[0]
-        X_knnCosineSum = X[:, filterknnCosine].sum(axis=0)
-        print("\Cosine reviews")
+        X_knnCosineSum = X_binary[:, knnCosineNeighbors].sum(axis=0)
+        print("\Cosine reviews:")
+        print(knnCosineNeighborsIDs)
         print(X_knnCosineSum)
 
 
@@ -243,8 +249,6 @@ if __name__ == "__main__":
 
         eTrain = []
         eTest = []
-        eTrainSci = []
-        eTestSci = []
 
         for p in range(11):
             print("p=%d" % p)
@@ -264,6 +268,10 @@ if __name__ == "__main__":
         fname = os.path.join("..", "figs", "least_squares_poly.pdf")
         plt.savefig(fname)
         print("\nFigure saved as '%s'" % fname)
+        print("\nTraining errors")
+        print(eTrain)
+        print("\nTraining errors")
+        print(eTest)
 
     else:
         print("Unknown question: %s" % question)

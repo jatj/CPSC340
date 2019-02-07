@@ -100,12 +100,21 @@ Find the item with the most total stars. \blu{Submit the product name and the nu
 Note: once you find the ID of the item, you can look up the name by going to the url \\ \verb|https://www.amazon.com/dp/ITEM_ID|, where \verb|ITEM_ID| is the ID of the item.
 For example, the URL for item ID ``B00CFM0P7Y'' is \url{https://www.amazon.com/dp/B00CFM0P7Y}. 
 
+\ans{
+    ID: B000HCLLMM\\
+    Name: Classic Accessories 73942 Veranda Grill Cover, X-Large Pebble \\
+    Link: \url{https://www.amazon.com/dp/B000HCLLMM} \\
+}
+\centerfig{1}{../figs/B000HCLLMM}
 
 \subsubsection{User with most reviews}
 \rubric{code:1}
 
-\blu{Find the user who has rated the most items, and the number of items they rated.}
-
+\blu{Find the user who has rated the most items, and the number of items they rated.} \\ \\
+\ans{
+    ID: A100WO06OQR8BQ\\
+    \# Items rated: 161 \\
+}
 
 \subsubsection{Histograms}
 \rubric{code:2}
@@ -118,6 +127,10 @@ For example, the URL for item ID ``B00CFM0P7Y'' is \url{https://www.amazon.com/d
 \end{enumerate}
 
 Note: for the first two, use \verb|plt.yscale('log', nonposy='clip')| to put the histograms on a log-scale. Also, you can use \verb|X.getnnz| to get the total number of nonzero elements along a specific axis.
+
+\centerfig{0.8}{../figs/ratings_per_user.pdf}
+\centerfig{0.8}{../figs/ratings_per_item.pdf}
+\centerfig{0.8}{../figs/ratings.pdf}
 
 \subsection{Finding similar items with nearest neighbours}
 \rubric{code:6}
@@ -143,14 +156,92 @@ Some notes/hints...
 
 \blu{Did normalized Euclidean distance and cosine similarity yields the same similar items, as expected?}
 
-
+\begin{enumerate}\color{ans}
+\item Euclidean distance
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+        {ID} & {Euclidean Distance} & \\ \midrule
+        {B00IJB4MLA} & 74.242 \\ 
+        {B00IJ8951K} & 75.146 \\ 
+        {B00HVXLFZS} & 76.517 \\ 
+        {B00EXDNA3O} & 76.517 \\ 
+        {B00743MZCM} & 76.517 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+\item Normalized Euclidean distance
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+        {ID} & {Normalized Euclidean Distance} & \\ \midrule
+        {B00IJB4MLA} & 76.385 \\ 
+        {B00IJB5MCS} & 76.408 \\ 
+        {B00IJ8951K} & 76.436 \\ 
+        {B00EF4206E} & 76.476 \\ 
+        {B00EF0I5Q2} & 76.568 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+\item Cosine similarity
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+        {ID} & {Cosine Similarity} & \\ \midrule
+        {B00IJB4MLA} & 0.698 \\ 
+        {B00IJB5MCS} & 0.721 \\ 
+        {B00IJ8951K} & 0.749 \\ 
+        {B00EF4206E} & 0.789 \\ 
+        {B00EF0I5Q2} & 0.881 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+\end{enumerate}
+\ans{
+    As we can see in the tables above the cosine similarity yields the same similar items of the 
+    Normalized Euclidean Distance. There are just two products in common of the three methods, the 
+    most similar item in all methods B00IJB4MLA, and the 2nd (Euclidean Distance) or 3rd 
+    (Normalized, Cosine) item  B00IJ8951K
+}
 \subsection{Total popularity}
 \rubric{reasoning:2}
 
 \blu{For both Euclidean distance and cosine similarity, find the number of reviews for each of the 5 recommended items and report it. Do the results make sense given what we discussed in class about Euclidean distance vs. cosine similarity and popular items?}
 
 Note: in \texttt{main.py} you are welcome to combine this code with your code from the previous part, so that you don't have to copy/paste all that code in another section of \texttt{main.py}.
-
+\begin{enumerate}\color{ans}
+\item Euclidean distance
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SS} \toprule
+        {ID} & {\# Reviews} \\ \midrule
+        {B00IJB4MLA} & 45 \\ 
+        {B00IJ8951K} & 1 \\ 
+        {B00HVXLFZS} & 6 \\ 
+        {B00EXDNA3O} & 22 \\ 
+        {B00743MZCM} & 1 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+\item Cosine similarity
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SS} \toprule
+        {ID} & {\# Reviews} \\ \midrule
+        {B00IJB4MLA} & 45 \\ 
+        {B00IJB5MCS} & 55 \\ 
+        {B00IJ8951K} & 1 \\ 
+        {B00EF4206E} & 1 \\ 
+        {B00EF0I5Q2} & 2 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+\end{enumerate}
 
 \section{Matrix Notation and Minimizing Quadratics}
 
@@ -401,11 +492,22 @@ and the updated training/test error.}
 Hint: recall that adding a bias $w_0$ is equivalent to adding a column of ones to the matrix $X$. Don't forget that you need to do the same transformation in the \texttt{predict} function.
 
 \begin{center}
-    \lstinputlisting[firstline=59,lastline=70]{../code/linear_model.py}
+    \lstinputlisting[firstline=49,lastline=62]{../code/linear_model.py}
 \end{center}
 
 \centerfig{1}{../figs/least_squares_bias.pdf}
-
+\ans{
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+        {Model} & {Train error} & {Test error} \\ \midrule
+        {LeastSquares} & 28122.8 & 28299.0 \\ 
+        {LeastSquaresBias} & 3551.3 & 3393.9 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+}
 
 \subsection{Polynomial Basis}
 \rubric{code:4}
@@ -432,7 +534,31 @@ Note: you should write the code yourself; don't use a library like sklearn's \te
 \end{center}
 
 \centerfig{1}{../figs/least_squares_poly.pdf}
-
+\ans{
+    \scriptsize
+    \setlength{\tabcolsep}{10pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+        {$p$} & {Train error} & {Test error} \\ \midrule
+        {$p=0$} & 15480.5 & 14390.763 \\ 
+        {$p=1$} & 3551.34 & 3393.869 \\ 
+        {$p=2$} & 2167.99 & 2480.725 \\ 
+        {$p=3$} & 252.046 & 242.804 \\ 
+        {$p=4$} & 251.461 & 242.126 \\ 
+        {$p=5$} & 251.143 & 239.544 \\ 
+        {$p=6$} & 248.582 & 246.005 \\ 
+        {$p=7$} & 247.011 & 242.887 \\ 
+        {$p=8$} & 241.306 & 245.966 \\ 
+        {$p=9$} & 235.761 & 259.296 \\ 
+        {$p=10$} & 235.074 & 256.299 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+    As the value of $p$ grows the error (training and testing) of the model decreases significantly, 
+    until $p=3$ from there the training errors start decreasing slowly around $250$ and on $p=7$ 
+    the training error continue decreasing whereas the testing error start to increase. The model is 
+    just overfitting as $p$ grows.
+}
 
 \section{Very-Short Answer Questions}
 \rubric{reasoning:7}
@@ -452,11 +578,10 @@ Note: you should write the code yourself; don't use a library like sklearn's \te
     $min_pts$. If those hyperparameters do not change, the results of the density-based clustering 
     will be the same on every run.
 }
-% JATJ: Check
 \item Can hierarchical clustering find non-convex clusters?\\
 \ans{
-    No, because it uses DBSCAN, and in DBSCAN all the clusters will be convex. So the different clusters 
-    at different hierarchies will always be convex.
+    It depends on the metrics used to create the clusters, then the hierarchical clusters found may or 
+    not be convex.
 }
 \item For model-based outlier detection, list an example method and problem with identifying outliers using this method.\\
 \ans{
@@ -493,9 +618,9 @@ Note: you should write the code yourself; don't use a library like sklearn's \te
     If a function is convex then every stationary point will be a global minima. And if the function is 
     convex will always have stationary points.
 }
-% JATJ: Check
 \item Why do we need gradient descent for the robust regression problem, as opposed to just using the normal equations? Hint: it is NOT because of the non-differentiability. Recall that we used gradient descent even after smoothing away the non-differentiable part of the loss.\\
 \ans{
+    Because it is faster to use rather than solving the normal equations.
 }
 \item What is the problem with having too small of a learning rate in gradient descent?\\
 \ans{
