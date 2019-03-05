@@ -3,27 +3,51 @@ import os
 import sys
 import numpy as np
 from scipy.optimize import approx_fprime
-import matplotlib.pyplot as plt
-import pandas as pd
-from scipy.sparse import csr_matrix as sparse_matrix
 
-def create_user_item_matrix(ratings,user_key="user",item_key="item"):
+def load_dataset(dataset_name):
 
-    n = len(set(ratings[user_key]))
-    d = len(set(ratings[item_key]))
+    # Load and standardize the data and add the bias term
+    if dataset_name == "logisticData":
+        with open(os.path.join('..', 'data', 'logisticData.pkl'), 'rb') as f:
+            data = pickle.load(f)
 
-    user_mapper = dict(zip(np.unique(ratings[user_key]), list(range(n))))
-    item_mapper = dict(zip(np.unique(ratings[item_key]), list(range(d))))
+        X, y = data['X'], data['y']
+        Xvalid, yvalid = data['Xvalidate'], data['yvalidate']
 
-    user_inverse_mapper = dict(zip(list(range(n)), np.unique(ratings[user_key])))
-    item_inverse_mapper = dict(zip(list(range(d)), np.unique(ratings[item_key])))
+        X, mu, sigma = standardize_cols(X)
+        Xvalid, _, _ = standardize_cols(Xvalid, mu, sigma)
 
-    user_ind = [user_mapper[i] for i in ratings[user_key]]
-    item_ind = [item_mapper[i] for i in ratings[item_key]]
+        X = np.hstack([np.ones((X.shape[0], 1)), X])
+        Xvalid = np.hstack([np.ones((Xvalid.shape[0], 1)), Xvalid])
 
-    X = sparse_matrix((ratings["rating"], (user_ind, item_ind)), shape=(n,d))
-    
-    return X, user_mapper, item_mapper, user_inverse_mapper, item_inverse_mapper, user_ind, item_ind        
+        return {"X":X, "y":y,
+                "Xvalid":Xvalid,
+                "yvalid":yvalid}
+
+    elif dataset_name == "multiData":
+        with open(os.path.join('..', 'data', 'multiData.pkl'), 'rb') as f:
+            data = pickle.load(f)
+        
+        X, y = data['X'], data['y']
+        Xvalid, yvalid = data['Xvalidate'], data['yvalidate']
+
+        X, mu, sigma = standardize_cols(X)
+        Xvalid, _, _ = standardize_cols(Xvalid, mu, sigma)
+
+        X = np.hstack([np.ones((X.shape[0], 1)), X])
+        Xvalid = np.hstack([np.ones((Xvalid.shape[0], 1)), Xvalid])
+
+        y -= 1  # so classes are 0,..,4
+        yvalid -=1
+
+        return {"X":X, "y":y,
+                "Xvalid":Xvalid,
+                "yvalid":yvalid}
+
+    else:
+        with open(os.path.join('..', DATA_DIR, dataset_name+'.pkl'), 'rb') as f:
+            data = pickle.load(f)
+        return data
 
 def standardize_cols(X, mu=None, sigma=None):
     # Standardize each column with mean 0 and variance 1
@@ -59,34 +83,3 @@ def check_gradient(model, X, y):
 
 def classification_error(y, yhat):
     return np.mean(y!=yhat)
-
-
-def test_and_plot(model,X,y,Xtest=None,ytest=None,title=None,filename=None):
-
-    # Compute training error
-    yhat = model.predict(X)
-    trainError = np.mean((yhat - y)**2)
-    print("Training error = %.1f" % trainError)
-
-    # Compute test error
-    if Xtest is not None and ytest is not None:
-        yhat = model.predict(Xtest)
-        testError = np.mean((yhat - ytest)**2)
-        print("Test error     = %.1f" % testError)
-
-    # Plot model
-    plt.figure()
-    plt.plot(X,y,'b.')
-
-    # Choose points to evaluate the function
-    Xgrid = np.linspace(np.min(X),np.max(X),1000)[:,None]
-    ygrid = model.predict(Xgrid)
-    plt.plot(Xgrid, ygrid, 'g')
-
-    if title is not None:
-        plt.title(title)
-
-    if filename is not None:
-        filename = os.path.join("..", "figs", filename)
-        print("Saving", filename)
-        plt.savefig(filename)

@@ -1,83 +1,98 @@
 import numpy as np
 from numpy.linalg import solve
-from findMin import findMin
+import findMin
 from scipy.optimize import approx_fprime
 import utils
 
-# Ordinary Least Squares
-class LeastSquares:
-    def fit(self,X,y):
-        self.w = solve(X.T@X, X.T@y)
+class logReg:
+    # Logistic Regression
+    def __init__(self, verbose=0, maxEvals=100):
+        self.verbose = verbose
+        self.maxEvals = maxEvals
+        self.bias = True
 
-    def predict(self, X):
-        return X@self.w
+    def funObj(self, w, X, y):
+        yXw = y * X.dot(w)
 
-# Least squares where each sample point X has a weight associated with it.
-# inherits the predict() function from LeastSquares
-class WeightedLeastSquares(LeastSquares): 
-    def fit(self,X,y,z):
-        # X^T z^T X w = X^T z^T y 
-        self.w = solve(X.T@z.T@X, X.T@z.T@y)
+        # Calculate the function value
+        f = np.sum(np.log(1. + np.exp(-yXw)))
 
-class LinearModelGradient(LeastSquares):
+        # Calculate the gradient value
+        res = - y / (1. + np.exp(yXw))
+        g = X.T.dot(res)
 
-    def fit(self,X,y):
+        return f, g
+
+    def fit(self,X, y):
         n, d = X.shape
 
         # Initial guess
-        self.w = np.zeros((d, 1))
-
-        # check the gradient
-        estimated_gradient = approx_fprime(self.w, lambda w: self.funObj(w,X,y)[0], epsilon=1e-6)
-        implemented_gradient = self.funObj(self.w,X,y)[1]
-        if np.max(np.abs(estimated_gradient - implemented_gradient) > 1e-4):
-            print('User and numerical derivatives differ: %s vs. %s' % (estimated_gradient, implemented_gradient));
-        else:
-            print('User and numerical derivatives agree.')
-
-        self.w, f = findMin(self.funObj, self.w, 100, X, y)
-
-    def funObj(self,w,X,y):
-        # Calculate the function value
-        f = np.sum(np.log(np.exp(X@w - y) + np.exp(y - X@w)))
-
-        # Calculate the gradient value
-        g = X.T@((np.exp(X@w - y) - np.exp(y - X@w))/(np.exp(X@w - y) + np.exp(y - X@w)))
-        
-        return (f,g)
+        self.w = np.zeros(d)
+        utils.check_gradient(self, X, y)
+        (self.w, f) = findMin.findMin(self.funObj, self.w,
+                                      self.maxEvals, X, y, verbose=self.verbose)
+    def predict(self, X):
+        return np.sign(X@self.w)
 
 
-# Least Squares with a bias added
-class LeastSquaresBias:
 
-    def fit(self,X,y):
-        w_0 = np.ones(X.shape[0])
-        X_ = np.c_[w_0,X]
-        self.w = solve(X_.T@X_, X_.T@y)
+class logRegL0(logReg):
+    # L0 Regularized Logistic Regression
+    def __init__(self, L0_lambda=1.0, verbose=2, maxEvals=400):
+        self.verbose = verbose
+        self.L0_lambda = L0_lambda
+        self.maxEvals = maxEvals
+
+    def fit(self, X, y):
+        n, d = X.shape
+        minimize = lambda ind: findMin.findMin(self.funObj,
+                                                  np.zeros(len(ind)),
+                                                  self.maxEvals,
+                                                  X[:, ind], y, verbose=0)
+        selected = set()
+        selected.add(0)
+        minLoss = np.inf
+        oldLoss = 0
+        bestFeature = -1
+
+        while minLoss != oldLoss:
+            oldLoss = minLoss
+            print("Epoch %d " % len(selected))
+            print("Selected feature: %d" % (bestFeature))
+            print("Min Loss: %.3f\n" % minLoss)
+
+            for i in range(d):
+                if i in selected:
+                    continue
+
+                selected_new = selected | {i} # tentatively add feature "i" to the seected set
+
+                # TODO for Q2.3: Fit the model with 'i' added to the features,
+                # then compute the loss and update the minLoss/bestFeature
+
+
+            selected.add(bestFeature)
+
+        self.w = np.zeros(d)
+        self.w[list(selected)], _ = minimize(list(selected))
+
+
+class leastSquaresClassifier:
+    def fit(self, X, y):
+        n, d = X.shape
+        self.n_classes = np.unique(y).size
+
+        # Initial guess
+        self.W = np.zeros((self.n_classes,d))
+
+        for i in range(self.n_classes):
+            ytmp = y.copy().astype(float)
+            ytmp[y==i] = 1
+            ytmp[y!=i] = -1
+
+            # solve the normal equations
+            # with a bit of regularization for numerical reasons
+            self.W[i] = np.linalg.solve(X.T@X+0.0001*np.eye(d), X.T@ytmp)
 
     def predict(self, X):
-        w_0 = np.ones(X.shape[0])
-        X_ = np.c_[w_0,X]
-        return X_@self.w
-
-# Least Squares with polynomial basis
-class LeastSquaresPoly:
-    def __init__(self, p):
-        self.leastSquares = LeastSquares()
-        self.p = p
-
-    def fit(self,X,y):
-        self.leastSquares.fit(self.__polyBasis(X), y)
-
-    def predict(self, X):
-        return self.leastSquares.predict(self.__polyBasis(X))
-
-    # A private helper function to transform any matrix X into
-    # the polynomial basis defined by this class at initialization
-    # Returns the matrix Z that is the polynomial basis of X.
-    def __polyBasis(self, X):
-        z = np.ones((X.shape[0],1))
-        for i in range(self.p):
-            for j in range(X.shape[1]):
-                z = np.c_[z,X[:,j]**(i+1)]
-        return z
+        return np.argmax(X@self.W.T, axis=1)
