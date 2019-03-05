@@ -67,6 +67,25 @@ if __name__ == "__main__":
         XBinValid, yBinValid = data['Xvalid'], data['yvalid']
 
         # TODO
+        logRegL2 = LogisticRegression('l2', C=1, solver='liblinear', fit_intercept=False)
+        logRegL2.fit(XBin, yBin)
+        logRegL2TrainErr = utils.classification_error(logRegL2.predict(XBin),yBin)
+        logRegL2ValidErr = utils.classification_error(logRegL2.predict(XBinValid),yBinValid)
+        
+        print("Scikit L2")
+        print("\nTraining error %.3f" % utils.classification_error(logRegL2.predict(XBin),yBin))
+        print("Validation error %.3f" % utils.classification_error(logRegL2.predict(XBinValid), yBinValid))
+        print("# nonZeros: %d" % (logRegL2.coef_ != 0).sum())
+
+        logRegL1 = LogisticRegression('l1', C=1, solver='liblinear', fit_intercept=False)
+        logRegL1.fit(XBin, yBin)
+        logRegL1TrainErr = utils.classification_error(logRegL1.predict(XBin),yBin)
+        logRegL1ValidErr = utils.classification_error(logRegL1.predict(XBinValid),yBinValid)
+
+        print("\n\nScikit L1")
+        print("\nTraining error %.3f" % utils.classification_error(logRegL1.predict(XBin),yBin))
+        print("Validation error %.3f" % utils.classification_error(logRegL1.predict(XBinValid), yBinValid))
+        print("# nonZeros: %d" % (logRegL1.coef_ != 0).sum())
 
     elif question == "3":
         data = utils.load_dataset("multiData")
