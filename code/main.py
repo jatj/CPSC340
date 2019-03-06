@@ -31,7 +31,7 @@ if __name__ == "__main__":
         XBin, yBin = data['X'], data['y']
         XBinValid, yBinValid = data['Xvalid'], data['yvalid']
 
-        model = linear_model.logRegL2(lammy=1.0, maxEvals=400)
+        model = linear_model.logRegL2(lammy=1.0, maxEvals=400, verbose=True)
         model.fit(XBin,yBin)
 
         print("\nlogRegL2 Training error %.3f" % utils.classification_error(model.predict(XBin), yBin))
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         XBin, yBin = data['X'], data['y']
         XBinValid, yBinValid = data['Xvalid'], data['yvalid']
 
-        model = linear_model.logRegL1(L1_lambda=1.0, maxEvals=400)
+        model = linear_model.logRegL1(L1_lambda=1.0, maxEvals=400, verbose=True)
         model.fit(XBin,yBin)
 
         print("\nlogRegL1 Training error %.3f" % utils.classification_error(model.predict(XBin),yBin))

@@ -190,8 +190,16 @@ f(w) = \sum_{i=1}^n \left[\log(1+\exp(-y_iw^Tx_i))\right] + \frac{\lambda}{2}\no
 
 Note: as you may have noticed, \texttt{lambda} is a special keyword in Python and therefore we can't use it as a variable name.
 As an alternative we humbly suggest \texttt{lammy}, which is what Mike's niece calls her stuffed animal toy lamb.
-However, you are free to deviate from this suggestion. In fact, as of Python 3 one can now use actual greek letters as variable names, like the $\lambda$ symbol. But, depending on your text editor, it may be annoying to input this symbol.
-
+However, you are free to deviate from this suggestion. In fact, as of Python 3 one can now use actual greek letters as variable names, like the $\lambda$ symbol. But, depending on your text editor, it may be annoying to input this symbol. \\ \\
+\ans{
+    By using the L2 regularization the training error was \textbf{0.002}, and the validation 
+    error \textbf{0.074} it was decreased by \textbf{0.01} in comparison to the \texttt{logReg} that doesn't 
+    make regularization. The number of gradient descent iterations was \textbf{30}. \\ \\
+    Below is the implementation of the \emph{logRegL2} class.
+}
+\begin{center}
+    \lstinputlisting[firstline=37,lastline=54]{../code/linear_model.py} 
+\end{center}
 
 \subsection{L1-Regularization}
 \rubric{code:3}
@@ -213,7 +221,17 @@ only pass in the the function/gradient of the differentiable
 part, $g$, rather than the whole function $f$; and (b) you need to provide the value $\lambda$.
 To reiterate, your \texttt{funObj} \textbf{should not contain the L1 regularization term}; rather it
 should only implement the function value and gradient for the training error term. The reason is that 
-the optimizer handles the non-smooth L1 regularization term in a specialized way (beyond the scope of CPSC 340).
+the optimizer handles the non-smooth L1 regularization term in a specialized way (beyond the scope of CPSC 340). \\ \\
+\ans{
+    Using L1 regularization we obtained a training error of \textbf{0.000} and a validation error of \textbf{0.052}.
+    So we got much more accuracy in the validation set than the L2 regularized and non regularized logistic 
+    regression. \\ \\
+    The number of gradient descent iterations was \textbf{47}. \\ \\
+    Below is the implementation of the \emph{logRegL1} class.
+}
+\begin{center}
+    \lstinputlisting[firstline=55,lastline=70]{../code/linear_model.py} 
+\end{center}
 
 \subsection{L0-Regularization}
 \rubric{code:4}
@@ -239,12 +257,27 @@ Information Criterion (AIC) for variable selection.
 
 Also note that, for numerical reasons, your answers may vary depending on exactly what system and package versions you are using. That is fine.
 
+\ans{
+    Using L0 regularization we obtained a training error of \textbf{0.000} and a validation error of \textbf{0.028}.
+    This Logistic regressor got much more accuracy in the validation set than the L1, L2 and 
+    non regularized logistic regression. \\ \\
+    This is because the model does feature selection considering just \textbf{25} out of \textbf{101}, so by doing this 
+    it probably reduces the noise that extra features will cause in the regressor.
+    Below is the implementation of the \emph{logRegL0} class.
+}
+\begin{center}
+    \lstinputlisting[firstline=71,lastline=125]{../code/linear_model.py} 
+\end{center}
+
 \subsection{Discussion}
 \rubric{reasoning:2}
 
 In a short paragraph, briefly discuss your results from the above. How do the
 different forms of regularization compare with each other?
-Can you provide some intuition for your results? No need to write a long essay, please!
+Can you provide some intuition for your results? No need to write a long essay, please! \\
+\ans{
+    JATJ: TODO
+}
 
 \subsection{Comparison with scikit-learn}
 \rubric{reasoning:1}
@@ -254,8 +287,13 @@ Compare your results (training error, validation error, number of nonzero weight
 you had $\lambda=1$ then use \texttt{C=1} (which happens to be the default anyway).
 You should set \texttt{fit\string_intercept} to \texttt{False} since we've already added the column of ones to $X$ and thus
 there's no need to explicitly fit an intercept parameter. After you've trained the model, you can access the weights
-with \texttt{model.coef\string_}.
-
+with \texttt{model.coef\string_}. \\ \\
+\ans{
+    For the L2 scikit-learn's LogisticRegression the training error was \textbf{0.002}, and the validation 
+    error a \textbf{0.074}. And for the L1 scikit-learn's LogisticRegression the training error 
+    was \textbf{0.000}, and the validation error a \textbf{0.052}. Which are the exact errors 
+    that we got on our implementations of L2 and L1 logReg respectively.
+}
 
 
 
@@ -331,7 +369,15 @@ W =
 \rubric{code:2}
 
 Using the squared error on this problem hurts performance because it has `bad errors' (the model gets penalized if it classifies examples `too correctly').
-Write a new class, \emph{logLinearClassifier}, that replaces the squared loss in the one-vs-all model with the logistic loss. \blu{Hand in the code and report the validation error}.
+Write a new class, \emph{logLinearClassifier}, that replaces the squared loss in the one-vs-all model with the logistic loss. \blu{Hand in the code and report the validation error}. \\ \\
+\ans{
+    The One-vs-all Logistic Regression obtained a training error of \textbf{0.084} and a validation 
+    error of \textbf{0.070}. This regressor had only \textbf{15} non-zero weights. \\ \\
+    Below is the implementation of the \emph{logLinearClassifier}
+}
+\begin{center}
+    \lstinputlisting[firstline=146,lastline=179]{../code/linear_model.py} 
+\end{center}
 
 
 \subsection{Softmax Classifier Gradient}
@@ -364,7 +410,15 @@ Make a new class, \emph{softmaxClassifier}, which fits $W$ using the softmax los
 
 Hint: you may want to use \verb|utils.check_gradient| to check that your implementation of the gradient is correct.
 
-Hint: with softmax classification, our parameters live in a matrix $W$ instead of a vector $w$. However, most optimization routines like \texttt{scipy.optimize.minimize}, or the optimization code we provide to you, are set up to optimize with respect to a vector of parameters. The standard approach is to ``flatten'' the matrix $W$ into a vector (of length $kd$, in this case) before passing it into the optimizer. On the other hand, it's inconvenient to work with the flattened form everywhere in the code; intuitively, we think of it as a matrix $W$ and our code will be more readable if the data structure reflects our thinking. Thus, the approach we recommend is to reshape the parameters back and forth as needed. The \texttt{funObj} function is directly communicating with the optimization code and thus will need to take in a vector. At the top of \texttt{funObj} you can immediately reshape the incoming vector of parameters into a $k \times d$ matrix using \texttt{np.reshape}. You can then compute the gradient using sane, readable code with the $W$ matrix inside \texttt{funObj}. You'll end up with a gradient that's also a matrix: one partial derivative per element of $W$. Right at the end of \texttt{funObj}, you can flatten this gradient matrix into a vector using \texttt{grad.flatten()}. If you do this, the optimizer will be sending in a vector of parameters to \texttt{funObj}, and receiving a gradient vector back out, which is the interface it wants -- and your \texttt{funObj} code will be much more readable, too. You may need to do a bit more reshaping elsewhere, but this is the key piece.
+Hint: with softmax classification, our parameters live in a matrix $W$ instead of a vector $w$. However, most optimization routines like \texttt{scipy.optimize.minimize}, or the optimization code we provide to you, are set up to optimize with respect to a vector of parameters. The standard approach is to ``flatten'' the matrix $W$ into a vector (of length $kd$, in this case) before passing it into the optimizer. On the other hand, it's inconvenient to work with the flattened form everywhere in the code; intuitively, we think of it as a matrix $W$ and our code will be more readable if the data structure reflects our thinking. Thus, the approach we recommend is to reshape the parameters back and forth as needed. The \texttt{funObj} function is directly communicating with the optimization code and thus will need to take in a vector. At the top of \texttt{funObj} you can immediately reshape the incoming vector of parameters into a $k \times d$ matrix using \texttt{np.reshape}. You can then compute the gradient using sane, readable code with the $W$ matrix inside \texttt{funObj}. You'll end up with a gradient that's also a matrix: one partial derivative per element of $W$. Right at the end of \texttt{funObj}, you can flatten this gradient matrix into a vector using \texttt{grad.flatten()}. If you do this, the optimizer will be sending in a vector of parameters to \texttt{funObj}, and receiving a gradient vector back out, which is the interface it wants -- and your \texttt{funObj} code will be much more readable, too. You may need to do a bit more reshaping elsewhere, but this is the key piece. \\ \\
+\ans{
+    The Softmax Classifier obtained a training error of \textbf{0.000} and a validation 
+    error of \textbf{0.008}. And it had only \textbf{15} non-zero weights. \\ \\
+    Below is the implementation of the \emph{softmaxClassifier}
+}
+\begin{center}
+    \lstinputlisting[firstline=180,lastline=228]{../code/linear_model.py} 
+\end{center}
 
 \subsection{Comparison with scikit-learn, again}
 \rubric{reasoning:1}
@@ -374,7 +428,25 @@ which can also handle multi-class problems.
 One-vs-all is the default; for softmax, set \texttt{multi\string_class='multinomial'}. For the softmax case,
 you'll also need to change the solver. You can use \texttt{solver='lbfgs'}.
 Since your comparison code above isn't using regularization, set \texttt{C} very large to effectively disable regularization.
-Again, set \texttt{fit\string_intercept} to \texttt{False} for the same reason as above (there is already a column of $1$'s added to the data set).
+Again, set \texttt{fit\string_intercept} to \texttt{False} for the same reason as above (there is already a column of $1$'s added to the data set). \\
+\ans{
+    Again for both implemententations One-vs-All and Softmax our results matched the Scikit-learn's 
+    \texttt{LogisticRegression} class results. \\ \\
+    For the One-vs-All the \texttt{LogisticRegression} model was created with the followin parameters:
+    \begin{enumerate}
+        \item $C=9999, $
+        \item $multi\_class='ovr', $
+        \item $solver='liblinear', $
+        \item $fit\_intercept=False$
+    \end{enumerate}
+    For the Softmax the \texttt{LogisticRegression} model was created with the followin parameters:
+    \begin{enumerate}
+        \item $C=9999, $
+        \item $multi\_class='multinomial', $
+        \item $solver='lbfgs', $
+        \item $fit\_intercept=False$
+    \end{enumerate}
+}
 
 \subsection{Cost of Multinomial Logistic Regression}
 \rubric{reasoning:2}
