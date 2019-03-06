@@ -133,7 +133,7 @@ if __name__ == "__main__":
 
         # TODO
 
-        oneVSall = LogisticRegression(C=999999999999999999999999999999999, multi_class='ovr', solver='liblinear', fit_intercept=False)
+        oneVSall = LogisticRegression(C=9999, multi_class='ovr', solver='liblinear', fit_intercept=False)
         oneVSall.fit(XMulti, yMulti)
         oneVSallTrainErr = utils.classification_error(oneVSall.predict(XMulti),yMulti)
         oneVSallValidErr = utils.classification_error(oneVSall.predict(XMultiValid),yMultiValid)
@@ -144,7 +144,7 @@ if __name__ == "__main__":
         print("# nonZeros: %d" % (oneVSall.coef_ != 0).sum())
 
 
-        softmaxModel = LogisticRegression(C=999999999999999999999999999999999, multi_class='multinomial', solver='lbfgs', fit_intercept=False)
+        softmaxModel = LogisticRegression(C=9999, multi_class='multinomial', solver='lbfgs', fit_intercept=False)
         softmaxModel.fit(XMulti, yMulti)
         softmaxModelTrainErr = utils.classification_error(softmaxModel.predict(XMulti),yMulti)
         softmaxModelValidErr = utils.classification_error(softmaxModel.predict(XMultiValid),yMultiValid)
