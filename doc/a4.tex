@@ -18,6 +18,7 @@
 \usepackage{bookmark}
 \usepackage{hyperref}
 \usepackage[procnames]{listings}
+\usepackage{soul}
 
 \def\rubric#1{\gre{Rubric: \{#1\}}}{}
 
@@ -95,11 +96,57 @@ Recall that convex loss functions are typically easier to minimize than non-conv
 \blu{Show that the following functions are convex}:
 
 \enum{
-\item $f(w) = \alpha w^2 - \beta w + \gamma$ with $w \in \R, \alpha \geq 0, \beta \in \R, \gamma \in \R$ (1D quadratic).
-\item $f(w) = -\log(\alpha w) $ with $\alpha > 0$ and $w > 0$ (``negative logarithm'')
-\item $f(w) = \norm{Xw-y}_1 + \frac{\lambda}{2}\norm{w}_1$ with $w \in \R^d, \lambda \geq 0$ (L1-regularized robust regression).
-\item $f(w) = \sum_{i=1}^n \log(1+\exp(-y_iw^Tx_i)) $ with $w \in \R^d$ (logistic regression).
-\item $f(w) = \sum_{i=1}^n[\max\{0,|w^Tx_i - y_i|\} - \epsilon] + \frac{\lambda}{2}\norm{w}_2^2$  with $w \in \R^d, \epsilon \geq 0, \lambda \geq 0$ (support vector regression).
+\item $f(w) = \alpha w^2 - \beta w + \gamma$ with $w \in \R, \alpha \geq 0, \beta \in \R, \gamma \in \R$ (1D quadratic). \\
+\ans{
+    \[ f'(w) = 2\alpha w - \beta \]
+    \[ f''(w) = 2\alpha \]
+    Since $\alpha \geq 0$ the second derivative is non-negative, thus the $f(w)$ is convex
+}
+\item $f(w) = -\log(\alpha w) $ with $\alpha > 0$ and $w > 0$ (``negative logarithm'') \\
+\ans{
+    \[ f'(w) = -\frac{\text{\st{$\alpha$}}}{\text{\st{$\alpha$}} w } = - \frac{1}{w} \]
+    \[ f''(w) = \frac{1}{w^2} \] 
+    Since $w > 0$ the second derivative is non-negative, thus the $f(w)$ is convex
+}
+\item $f(w) = \norm{Xw-y}_1 + \frac{\lambda}{2}\norm{w}_1$ with $w \in \R^d, \lambda \geq 0$ (L1-regularized robust regression). \\
+\ans{
+    \[ f(w) = \sum_{i=1}^n |w^TX_i - y_i| + \frac{\lambda}{2} \sum_{i=1}^d |w_i| \]
+    We know that a sum of two convex functions is also convex, let $g(w) = |w^TX_i - y_i|$ and 
+    $h(w_i) = |w_i|$
+    \[g(w) = |w^TX_i - y_i|\]
+    \[g'(w) = X_i\]
+    \[g''(w) = 0\]
+    So $g(w)$ is convex
+    \[h(w_i) = |w_i|\]
+    \[h'(w) = 1\]
+    \[h''(w) = 0\]
+    So $h(w)$ is convex, thus $f(w)$ is convex because it is the result of the sum of multiple 
+    convex functions.
+}
+\item $f(w) = \sum_{i=1}^n \log(1+\exp(-y_iw^Tx_i)) $ with $w \in \R^d$ (logistic regression). \\
+\ans{
+    let $z = -y_iw^Tx_i$, and let $g(w) = \log(1+\exp(z))$ 
+    \[ g'(w) = \frac{\exp(z)}{1+\exp(z)} = \frac{1}{1+\exp(-z)} \]
+    \[ g''(w) = \frac{\exp(-z)}{(1+\exp(-z))^2} \]
+    $g''(w)$ will always be $> 0$, because exp() of something is never gonna be negative, thus 
+    $f(w)$ is convex because it is a summatory $g(w)$ that is always convex
+}
+\item $f(w) = \sum_{i=1}^n[\max\{0,|w^Tx_i - y_i|\} - \epsilon] + \frac{\lambda}{2}\norm{w}_2^2$  with $w \in \R^d, \epsilon \geq 0, \lambda \geq 0$ (support vector regression). \\
+\ans{
+    A max function of convex functions will also be convex. We are taking the max of two functions, 
+    \begin{enumerate}
+        \item $g() = 0$
+        \item $h(w) = |w^Tx_i - y_i|$
+    \end{enumerate}
+    We know that $g$ will be convex. For $h(w)$
+    \[ h'(w) = x_i\]
+    \[ h''(w) = 1\] So $h(w)$ is convex because its second derivative is non-negative.\\
+    Thus the whole max function is convex, and also the summatory of this max functions. This summatory 
+    is adding another function $l(w) = \frac{\lambda}{2}\norm{w}_2^2$
+    \[ l'(w) = \frac{\text{\st{2}}\lambda}{\text{\st{2}}}w = \lambda w\]
+    \[ l'(w) = \frac{\text{\st{2}}\lambda}{\text{\st{2}}}w = \lambda w\]
+    So $l(w)$ is also convex which will make $f(w)$ a convex function.
+}
 }
 
 General hint: for the first two you can check that the second derivative is non-negative since they are one-dimensional. For the last 3 you'll have to use some of the results regarding how combining convex functions can yield convex functions which can be found in the lecture slides.
