@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import sys
 
 import utils
 import linear_model
@@ -111,6 +112,7 @@ if __name__ == "__main__":
 
         print("logLinearClassifier Training error %.3f" % utils.classification_error(model.predict(XMulti), yMulti))
         print("logLinearClassifier Validation error %.3f" % utils.classification_error(model.predict(XMultiValid), yMultiValid))
+        print("# nonZeros: %d" % (model.W != 0).sum())
 
     elif question == "3.4":
         data = utils.load_dataset("multiData")
@@ -122,6 +124,7 @@ if __name__ == "__main__":
 
         print("Training error %.3f" % utils.classification_error(model.predict(XMulti), yMulti))
         print("Validation error %.3f" % utils.classification_error(model.predict(XMultiValid), yMultiValid))
+        print("# nonZeros: %d" % (model.W != 0).sum())
 
     elif question == "3.5":
         data = utils.load_dataset("multiData")
@@ -129,3 +132,24 @@ if __name__ == "__main__":
         XMultiValid, yMultiValid = data['Xvalid'], data['yvalid']
 
         # TODO
+
+        oneVSall = LogisticRegression(C=999999999999999999999999999999999, multi_class='ovr', solver='liblinear', fit_intercept=False)
+        oneVSall.fit(XMulti, yMulti)
+        oneVSallTrainErr = utils.classification_error(oneVSall.predict(XMulti),yMulti)
+        oneVSallValidErr = utils.classification_error(oneVSall.predict(XMultiValid),yMultiValid)
+
+        print("\nScikit Multiclass One vs All")
+        print("\nTraining error %.3f" % utils.classification_error(oneVSall.predict(XMulti),yMulti))
+        print("Validation error %.3f" % utils.classification_error(oneVSall.predict(XMultiValid), yMultiValid))
+        print("# nonZeros: %d" % (oneVSall.coef_ != 0).sum())
+
+
+        softmaxModel = LogisticRegression(C=999999999999999999999999999999999, multi_class='multinomial', solver='lbfgs', fit_intercept=False)
+        softmaxModel.fit(XMulti, yMulti)
+        softmaxModelTrainErr = utils.classification_error(softmaxModel.predict(XMulti),yMulti)
+        softmaxModelValidErr = utils.classification_error(softmaxModel.predict(XMultiValid),yMultiValid)
+
+        print("\nScikit Multiclass SoftMax")
+        print("\nTraining error %.3f" % utils.classification_error(softmaxModel.predict(XMulti),yMulti))
+        print("Validation error %.3f" % utils.classification_error(softmaxModel.predict(XMultiValid), yMultiValid))
+        print("# nonZeros: %d" % (softmaxModel.coef_ != 0).sum())

@@ -145,7 +145,7 @@ class leastSquaresClassifier:
 
 class logLinearClassifier(logReg):
     
-    def funObj(self, w, X, y):
+    def funObj(self, w, X, y):        
         yXw = y * X.dot(w)
 
         # Calculate the function value
@@ -180,15 +180,35 @@ class logLinearClassifier(logReg):
 class softmaxClassifier(logReg):
     
     def funObj(self, w, X, y):
+        k, d  = self.W_shape
+        n, d  = X.shape
+        W = w.reshape((k, d))
+        
         # Calculate the function value
-        f = np.sum( -(X.dot(w)).T.dot(y) + np.log(np.sum(np.exp(X@w))))
-
-        indicator = y.copy().astype(float)
-        indicator[y==-1] = 0
+        f = 0
+        sumExps = np.zeros(n)
+        for i in range(n):
+            Wyi = W[y[i]]
+            f -= Wyi.T.dot(X[i])
+            for cprime in range(k):
+                sumExps[i] += np.exp(W[cprime].T.dot(X[i]))
+            f += np.log(sumExps[i])
 
         # Calculate the gradient value
-        g = X.T.dot((np.exp(X.dot(w))/self.totalExp - indicator))
-        return f, g
+        g = np.zeros((k, d))
+        I = lambda yi, c: 1 if yi == c else 0
+        for c in range(k):
+            for j in range(d):
+                sumN = 0
+                for i in range(n):
+                    Iyi = I(y[i], c)
+                    xij = X[i,j]
+                    pYi = np.exp(W[c].T.dot(X[i]))/sumExps[i]
+                    sumN += xij*(pYi - Iyi)
+
+                g[c,j] = sumN
+        
+        return f, g.flatten()
 
     def fit(self, X, y):
         n, d = X.shape
@@ -196,22 +216,13 @@ class softmaxClassifier(logReg):
 
         # Initial guess
         self.W = np.zeros((self.n_classes,d))
+        self.W_shape = self.W.shape
 
-        for i in range(self.n_classes):
-            self.w = self.W[i]
-            self.totalExp = np.zeros(n)
-            for c in range(self.n_classes):
-                self.totalExp += np.exp(X.dot(self.W[c]))
-
-            ytmp = y.copy().astype(float)
-            ytmp[y==i] = 1
-            ytmp[y!=i] = -1
-            utils.check_gradient(self, X, ytmp)
-            return
-            # solve the normal equations
-            # with a bit of regularization for numerical reasons
-            (self.W[i], f) = findMin.findMin(self.funObj, self.W[i],
-                                        self.maxEvals, X, ytmp, verbose=self.verbose)
+        self.w = self.W.flatten()
+        utils.check_gradient(self, X, y)
+        (flatteneddW, f) = findMin.findMin(self.funObj, self.W.flatten(),
+                                        self.maxEvals, X, y, verbose=self.verbose)
+        self.W = flatteneddW.reshape(self.W_shape)
 
     def predict(self, X):
         return np.argmax(X@self.W.T, axis=1)
