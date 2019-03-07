@@ -258,10 +258,10 @@ Information Criterion (AIC) for variable selection.
 Also note that, for numerical reasons, your answers may vary depending on exactly what system and package versions you are using. That is fine.
 
 \ans{
-    Using L0 regularization we obtained a training error of \textbf{0.000} and a validation error of \textbf{0.028}.
+    Using L0 regularization we obtained a training error of \textbf{0.000} and a validation error of \textbf{0.018}.
     This Logistic regressor got much more accuracy in the validation set than the L1, L2 and 
     non regularized logistic regression. \\ \\
-    This is because the model does feature selection considering just \textbf{25} out of \textbf{101}, so by doing this 
+    This is because the model does feature selection considering just \textbf{24} out of \textbf{101}, so by doing this 
     it probably reduces the noise that extra features will cause in the regressor.
     Below is the implementation of the \emph{logRegL0} class.
 }
@@ -276,7 +276,13 @@ In a short paragraph, briefly discuss your results from the above. How do the
 different forms of regularization compare with each other?
 Can you provide some intuition for your results? No need to write a long essay, please! \\
 \ans{
-    JATJ: TODO
+    The main difference between L1 and L2 regularization is that using L1 results in a $w$ 
+    with some features in 0, which will reduce the noise that those (un-relevant) features that 
+    are introducing to our regression. 
+    So this feature selection ends in an improvement on our validation error. 
+    We noticed this in the 2.2 problem which selected \textbf{71} features and had \textbf{0.052} 
+    validation error. Moreover by using \emph{forward selection} algorithm on problem 2.3 we
+    selected only \textbf{24} features and obtained a much better, \textbf{0.018}, validation error.
 }
 
 \subsection{Comparison with scikit-learn}
@@ -314,20 +320,50 @@ Finally, let's assume $n=2$
 where our 2 data points are $(x_1,y_1)=(1,2)$ and $(x_2,y_2)=(0,1)$. 
 
 \begin{enumerate}
-\item Plug in the data set values and write the loss in its simplified form, without a summation.
+\item Plug in the data set values and write the loss in its simplified form, without a summation. \\
+\ans{
+    \[ f(w) = \half (w - 2)^2 + \half(0 - 1)^2 + \lambda\sqrt{|w|} \]
+    \[ f(w) = \half (w - 2)^2 + \half + \lambda\sqrt{|w|} \]
+}
 \item If $\lambda=0$, what is the solution, i.e. $\arg \min_w f(w)$?
+\ans{
+    \[ f(w) = \half (w - 2)^2 + \half + 0\sqrt{|w|} \]
+    \[ f'(w) = w - 2\]
+    \[ 0 = w - 2 \text{ } \fbox{w = 2} \]
+}
 \item If $\lambda\rightarrow \infty$, what is the solution, i.e., $\arg \min_w f(w)$?
+\ans{
+    \[ f(w) = \half (w - 2)^2 + \half + \infty\sqrt{|w|} \]
+    By considering the above function, as $\lambda$ grows to $\infty$ the regularization term will become
+    bigger and bigger, the minimum of the function will be acquired by setting \fbox{$w = 0$} that will make 
+    the regularization term to be 0 and leave use with $f(0) = \half (0 - 2)^2 + \half + 0$
+}
 \item Plot $f(w)$ when $\lambda = 1$. What is $\arg \min_w f(w)$ when $\lambda=1$? Answer to one decimal place if appropriate.
+\ans{
+    \[ f(w) = \half (w - 2)^2 + \half + \sqrt{|w|} \]
+    \[ f'(w) = w - 2 + \frac{1}{2\sqrt{|w|}}\]
+    \[ 2 = w + \frac{1}{2\sqrt{|w|}} \text{  \fbox{$w \approx 1.6$}} \]
+}
 \item Plot $f(w)$ when $\lambda = 10$. What is $\arg \min_w f(w)$ when $\lambda=10$? Answer to one decimal place if appropriate.
+\ans{
+    \[ f(w) = \half (w - 2)^2 + \half + 10\sqrt{|w|} \]
+    The minimum value of $f(w)$ we can get needs to cancel the regularization term because $\lambda=10$, 
+    with a non-zero $w$ would be pretty big. Thus if we set \fbox{$w = 0$} we get the minimum of $f(w)$.
+}
 \item Does L$\frac12$ regularization behave more like L1 regularization or L2 regularization
-when it comes to performing feature selection? Briefly justify your answer.
+when it comes to performing feature selection? Briefly justify your answer. \\ \\
+\ans{
+    L$\frac12$ behaves more like L1 regularization, by setting a large $\lambda$ we got a $w = 0$
+}
 \item Is least squares with L$\frac12$ regularization 
-a convex optimization problem? Briefly justify your answer.
+a convex optimization problem? Briefly justify your answer.\\ \\
+\ans{
+It is non-convex because the second derivative of the regularization term is negative.
+\[ g(w) = \lambda\sqrt{|w|} \]
+\[ g'(w) = \frac{\lambda}{2\sqrt{|w|}} \]
+\[ g''(w) = - \frac{\lambda}{4\sqrt{|w|}} \]
+}
 \end{enumerate}
-
-
-
-
 
 \section{Multi-Class Logistic}
 
@@ -361,9 +397,23 @@ W =
 +3 & -1
 \end{bmatrix}
 \]
-\blu{Under this model, what class label would we assign to the test example? (Show your work.)}
-
-
+\blu{Under this model, what class label would we assign to the test example? (Show your work.)} \\ \\
+\ans{
+    For determining what class to assign we would need to compute the \texttt{argmax} of $\hat{x}W^T$
+    this will result in a $ 1 \times k $ vector which we will find the index of the max value in it, and 
+    that would be the class we should pick.
+    \[
+    \hat{x}W^T = 
+    \begin{bmatrix}1 & 1\end{bmatrix}
+    \begin{bmatrix}
+        +2 & +2 & +3\\
+        -1 & -2 & -1
+    \end{bmatrix}
+    = \begin{bmatrix}1 & 0 & 2\end{bmatrix}
+    \]
+    \[ \text{class} = argmax(\hat{x}W^T) = argmax(\begin{bmatrix}1 & 0 & 2\end{bmatrix}) = \fbox{3}\]
+    So for $\hat{x}$ we should pick the class 3
+}
 
 \subsection{One-vs-all Logistic Regression}
 \rubric{code:2}
@@ -402,6 +452,22 @@ p(y_i=c \mid W, x_i) = \frac{\exp(w_c^Tx_i)}{\sum_{c'=1}^k\exp(w_{c'}^Tx_i)}
 \]
 
 \end{itemize}
+\ans{
+    \[f(W) \text{ is a composition of to functions, let}\]
+    \[ g(W) = \sum_{i=1}^n -w_{y_i}^Tx_i \]
+    \[h(W) = \sum_{i=1}^n \log\left(\sum_{c' = 1}^k \exp(w_{c'}^Tx_i)\right) \]
+    \[\frac{\partial g}{\partial W_{cj}} = \sum_{i=1}^n -x_{ij} I(y_i = c) \]
+    \[\text{In the previous derivative when $c \neq y_i$ the partial derivative should be 0, so we are using the, 
+    indicator function previously defined to manage this case}\]
+    \[\frac{\partial h}{\partial W_{cj}} = \sum_{i=1}^n \frac{x_{ij}\exp(w_c^Tx_i)}{\sum_{c' = 1}^k \exp(w_{c'}^Tx_i)} \]
+    \[ \text{So: } \frac{\partial f}{\partial W_{cj}} = \frac{\partial g}{\partial W_{cj}} + \frac{\partial h}{\partial W_{cj}} \] \\
+    \[\frac{\partial f}{\partial W_{cj}} = \sum_{i=1}^n -x_{ij} I(y_i = c) + \sum_{i=1}^n \frac{x_{ij}\exp(w_c^Tx_i)}{\sum_{c' = 1}^k \exp(w_{c'}^Tx_i)}\]
+    \[\frac{\partial f}{\partial W_{cj}} = \sum_{i=1}^n \left[ -x_{ij} I(y_i = c) + \frac{x_{ij}\exp(w_c^Tx_i)}{\sum_{c' = 1}^k \exp(w_{c'}^Tx_i)} \right]\]
+    \[\frac{\partial f}{\partial W_{cj}} = \sum_{i=1}^n x_{ij}\left[ -I(y_i = c) + \frac{\exp(w_c^Tx_i)}{\sum_{c' = 1}^k \exp(w_{c'}^Tx_i)} \right]\]
+    \[ \text{let } p(y_i=c \mid W, x_i) = \frac{\exp(w_c^Tx_i)}{\sum_{c'=1}^k\exp(w_{c'}^Tx_i)} \]
+    \[\text{So the partial derivatives of the Softmax loss is the following:}\]
+    \[\frac{\partial f}{\partial W_{cj}} = \sum_{i=1}^n x_{ij}\left[ p(y_i=c \mid W, x_i) - I(y_i = c) \right]\]
+}
 
 \subsection{Softmax Classifier Implementation}
 \rubric{code:5}
@@ -461,12 +527,35 @@ Assume that we have
 }
 Also assume that we take $X$ and form new features $Z$ using Gaussian RBFs as a non-linear feature transformation.
 \blu{\enum{
-\item In $O()$ notation, what is the cost of training the softmax classifier with gradient descent?
+\item In $O()$ notation, what is the cost of training the softmax classifier with gradient descent? \\ 
+\ans{
+    $Z$ is an $n \times n$ matrix so we need $n^2$ for generate every value $Z_{ij}$. And the 
+    computation of every $Z_{ij}$ value we are calculating  $\exp(-\frac{\epsilon^2}{2\sigma^2})$ 
+    where $\epsilon$ is the distance between training examples $X_i$ and $X_j$ which will take $d$ 
+    time to compute. Therefore the creation of $Z$ will have $O(n^2d)$ time. \\ \\
+    After creating $Z$ we need to use gradient descent with softmax, which will normally 
+    take $nd + nkd$ time but since we are using $Z$ to calculate this, we have $d = n$ so the time would 
+    be $n^2 +kn^2$. We need to do calculate this function $T$ times until convergence, so the total 
+    running time of gradient descent with softmax would be $O(Tn^2 +Tkn^2)$. \\ \\
+    By adding the two running times, the creation of $Z$ $O(n^2d)$ and gradient descent with softmax 
+    $O(Tn^2 +Tkn^2)$, we get that the total of creating $Z$ and train on it would be 
+    $O(Tn^2 + Tkn^2 + n^2d)$
+}
 \item What is the cost of classifying the $t$ test examples?
+\ans{
+    For the classification we would also need to transform our test data using Gaussian RBF transformation 
+    this would generate a $n \times t$ matrix $\tilde{Z}$. We can generate this by calculating 
+    the Gaussian RBF function $\exp(-\frac{\epsilon^2}{2\sigma^2})$ $\epsilon$ where is the distance 
+    between training examples $\hat{X}_i$ and $X_j$. This would take $O(ntd)$ time.\\ \\
+    The classification of the test data needs to compute $W\tilde{Z}$ where $W$ is a $k \times n$ matrix 
+    so this will take $O(nkt)$ time, and will result in a $k \times t$ matrix that we need to calculate 
+    the \texttt{argmax} of each column to get the correct class for each $t$ test example, the
+    \texttt{argmax} will take $k$ time and we will do this $t$ times so $O(kt)$. \\ \\
+    The whole process of classifying $t$ test examples is has a running time of $O(ntd + nkt + kt)$
 }
 }
-Hint: you'll need to take into account the cost of forming the basis at training ($Z$) and test ($\tilde{Z})$ time. It will be helpful to think of the dimensions of all the various matrices.
-
+}
+Hint: you'll need to take into account the cost of forming the basis at training ($Z$) and test ($\tilde{Z})$ time. It will be helpful to think of the dimensions of all the various matrices. 
 
 
 \section{Very-Short Answer Questions}
@@ -474,18 +563,71 @@ Hint: you'll need to take into account the cost of forming the basis at training
 
 
 \enum{
-\item Suppose that a client wants you to identify the set of ``relevant'' factors that help prediction. Why shouldn't you promise them that you can do this?
-\item Consider performing feature selection by measuring the ``mutual information'' between each column of $X$ and the target label $y$, and selecting the features whose mutual information is above a certain threshold (meaning that the features provides a sufficient number of ``bits'' that help in predicting the label values). Without delving into any details about mutual information, what is a potential problem with this approach?
-\item What is a setting where you would use the L1-loss, and what is a setting where you would use L1-regularization?
-\item Among L0-regularization, L1-regularization, and L2-regularization: which yield convex objectives? Which yield unique solutions? Which yield sparse solutions?
-\item What is the effect of $\lambda$ in L1-regularization on the sparsity level of the solution? What is the effect of $\lambda$ on the two parts of the fundamental trade-off?
-\item Suppose you have a feature selection method that tends not generate false positives but has many false negatives (it misses relevant variables). Describe an ensemble method for feature selection that could improve the performance of this method.
-\item Suppose a binary classification dataset has 3 features. If this dataset is ``linearly separable'', what does this precisely mean in three-dimensional space?
-\item When searching for a good $w$ for a linear classifier, why do we use the logistic loss instead of just minimizing the number of classification errors?
-\item What are ``support vectors'' and what's special about them?
-\item What is a disadvantage of using the perceptron algorithm to fit a linear classifier?
-\item Why we would use a multi-class SVM loss instead of using binary SVMs in a one-vs-all framework?
-\item How does the hyper-parameter $\sigma$ affect the shape of the Gaussian RBFs bumps? How does it affect the fundamental tradeoff?
+\item Suppose that a client wants you to identify the set of ``relevant'' factors that help prediction. Why shouldn't you promise them that you can do this? \\
+\ans{
+    Because this factors would depend on the training data, we are not sure that we have enough data or 
+    enough features to really distinguish the ``relevant'' factors from the ``non-relevant'' ones.
 }
-
+\item Consider performing feature selection by measuring the ``mutual information'' between each column of $X$ and the target label $y$, and selecting the features whose mutual information is above a certain threshold (meaning that the features provides a sufficient number of ``bits'' that help in predicting the label values). Without delving into any details about mutual information, what is a potential problem with this approach? \\
+\ans{
+    This approach is more likely to ``memorize'' the data, it sounds like the aproach of decision trees, 
+    if so we might get a pretty small training error, but probably a big validation error.
+}
+\item What is a setting where you would use the L1-loss, and what is a setting where you would use L1-regularization? \\
+\ans{
+    When we don't want to be affected by outliers we would use L1-loss, on the other hand when we 
+    are willing to just consider the man most ``relevant'' features on the dataset for our predictions 
+    we would use L1-regularization.
+}
+\item Among L0-regularization, L1-regularization, and L2-regularization: which yield convex objectives? Which yield unique solutions? Which yield sparse solutions? \\
+\ans{
+    L0-regularization yields convex objectives
+    L1-regularization yields sparse solutions
+    L2-regularization yields unique solution
+}
+\item What is the effect of $\lambda$ in L1-regularization on the sparsity level of the solution? What is the effect of $\lambda$ on the two parts of the fundamental trade-off? \\
+\ans{
+    As $\lambda$ grows it would make the solution more sparse, also it makes the approximation error smaller, but the validation error is bigger.
+}
+\item Suppose you have a feature selection method that tends not generate false positives but has many false negatives (it misses relevant variables). Describe an ensemble method for feature selection that could improve the performance of this method. \\
+\ans{
+    We could use a random forest approach, by bootstrapping several training sets and then run the 
+    same feature selection method on all and average the output of all for the prediction.
+}
+\item Suppose a binary classification dataset has 3 features. If this dataset is ``linearly separable'', what does this precisely mean in three-dimensional space? \\
+\ans{
+    The data would be separated by a plane.
+}
+\item When searching for a good $w$ for a linear classifier, why do we use the logistic loss instead of just minimizing the number of classification errors? \\
+\ans{
+    Because the linear classifier uses continous data.
+}
+\item What are ``support vectors'' and what's special about them? \\
+\ans{
+    The support vectors are the training data points that are closest to the decision hyperplane. If the 
+    training data we are using is linearly separable these ``support vectors'' are ``supporting'' the 
+    hyperplane that perfectly separates the training points of one class from another one.
+}
+\item What is a disadvantage of using the perceptron algorithm to fit a linear classifier? \\
+\ans{
+    The perceptron can't handle non-linearly separable data. So if the training data that we are 
+    using is not linearly separable it would output a very bad model.
+}
+\item Why we would use a multi-class SVM loss instead of using binary SVMs in a one-vs-all framework? \\
+\ans{
+    Because the one-vs-all approach is generating $k$ independent classifiers so the decision boundaries 
+    will try to isolate each class from the rest of the training set. So on the whole they might not 
+    model all the training data in a proper way, we would just have $k$ decision hyperplanes separating 
+    the data. \\ \\
+    On the other hand a multi-class SVM will try to find the class that is more likely to 
+    be. This allow us to have much more complex decision boundaries because it is considering all 
+    the classes at the training time.
+}
+\item How does the hyper-parameter $\sigma$ affect the shape of the Gaussian RBFs bumps? How does it affect the fundamental tradeoff? \\
+\ans{
+    As $\sigma$ grows it will flatten the Gaussian RBFs bumps, making it more likely to have samples 
+    on the tails of the Gaussian RBF bump. \\
+    The value of $\sigma$ should reduce the approximation error, but increase the validation error.
+}
+}
 \end{document}

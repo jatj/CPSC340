@@ -83,7 +83,7 @@ class logRegL0(logReg):
 
         # Calculate the gradient value
         res = - y / (1. + np.exp(yXw))
-        g = X.T.dot(res) + self.L0_lambda
+        g = X.T.dot(res)
 
         return f, g
 

@@ -144,7 +144,7 @@ if __name__ == "__main__":
         print("# nonZeros: %d" % (oneVSall.coef_ != 0).sum())
 
 
-        softmaxModel = LogisticRegression(C=9999, multi_class='multinomial', solver='lbfgs', fit_intercept=False)
+        softmaxModel = LogisticRegression(C=9999, multi_class='multinomial', solver='lbfgs', fit_intercept=False, max_iter=200)
         softmaxModel.fit(XMulti, yMulti)
         softmaxModelTrainErr = utils.classification_error(softmaxModel.predict(XMulti),yMulti)
         softmaxModelValidErr = utils.classification_error(softmaxModel.predict(XMultiValid),yMultiValid)
