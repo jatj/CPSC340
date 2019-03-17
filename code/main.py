@@ -1,3 +1,4 @@
+import sys
 import os
 import pickle
 import argparse
@@ -56,7 +57,26 @@ if __name__ == '__main__':
 
         Xtrain, Xtest, ytrain, ytest = train_test_split(X,y,random_state=0)
 
-        # YOUR CODE HERE
+        # kernel logistic regression with a poly kernel
+        poly_kernel = kernelLogRegL2(kernel_fun=logReg.kernel_poly, lammy=0.01)
+        poly_kernel.fit(Xtrain, ytrain)
+
+        print("\nPOLY: Training error %.3f" % np.mean(poly_kernel.predict(Xtrain) != ytrain))
+        print("POLY: Validation error %.3f" % np.mean(poly_kernel.predict(Xtest) != ytest))
+
+        utils.plotClassifier(poly_kernel, Xtrain, ytrain)
+        utils.savefig("logRegPolynomialKernel.png")
+
+        # kernel logistic regression with a RBF kernel
+        RBF_kernel = kernelLogRegL2(kernel_fun=logReg.kernel_RBF, lammy=0.01, sigma=0.5)
+        RBF_kernel.fit(Xtrain, ytrain)
+
+        print("\nRBF: Training error %.3f" % np.mean(RBF_kernel.predict(Xtrain) != ytrain))
+        print("RBF: Validation error %.3f" % np.mean(RBF_kernel.predict(Xtest) != ytest))
+
+        utils.plotClassifier(RBF_kernel, Xtrain, ytrain)
+        utils.savefig("logRegRBFKernel.png")
+
 
     elif question == "1.2":
         dataset = load_dataset('nonLinearData.pkl')
@@ -65,7 +85,44 @@ if __name__ == '__main__':
 
         Xtrain, Xtest, ytrain, ytest = train_test_split(X,y,random_state=0)
 
-        # YOUR CODE HERE
+        M1 = [-2, -1, 0, 1, 2]
+        M2 = [-4, -3, -2, -1, 0]
+        maxTrain = sys.maxsize
+        maxTrainParams = (-1, -1)
+        maxTest = sys.maxsize
+        maxTestParams = (-1, -1)
+        for i in range(len(M1)):
+            for j in range(len(M2)):
+                sigma = 10**M1[i]
+                lammy = 10**M2[j]
+                RBF_kernel = kernelLogRegL2(kernel_fun=logReg.kernel_RBF, lammy=lammy, sigma=sigma)
+                RBF_kernel.fit(Xtrain, ytrain)
+                trainError = np.mean(RBF_kernel.predict(Xtrain) != ytrain)
+                testError = np.mean(RBF_kernel.predict(Xtest) != ytest)
+                if(trainError < maxTrain):
+                    maxTrain = trainError
+                    maxTrain_test = testError
+                    maxTrainParams = (sigma, lammy)
+                    maxTrainModel = RBF_kernel
+                if(testError < maxTest):
+                    maxTest = testError
+                    maxTest_train = trainError
+                    maxTestParams = (sigma, lammy)
+                    maxTestModel = RBF_kernel
+                
+        
+        print("\nRBF max: Training error %.3f" % maxTrain)
+        print("RBF max: Validation error %.3f" % maxTrain_test)
+        print("sigma: %.3f, lambda: %.3f" % (maxTrainParams[0], maxTrainParams[1]))
+        print("\nRBF max: Validation error %.3f" % maxTest)
+        print("RBF max: Training error %.3f" % maxTest_train)
+        print("sigma: %.3f, lambda: %.3f" % (maxTestParams[0], maxTestParams[1]))
+
+        utils.plotClassifier(maxTrainModel, Xtrain, ytrain)
+        utils.savefig("logRegRBFKernel_MaxTrain.png")
+
+        utils.plotClassifier(maxTestModel, Xtrain, ytrain)
+        utils.savefig("logRegRBFKernel_MaxValidation.png")        
 
     elif question == '4.1': 
         X = load_dataset('highway.pkl')['X'].astype(float)/255

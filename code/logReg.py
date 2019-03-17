@@ -45,10 +45,16 @@ class logRegL2():
         return np.sign(X@self.w)
 
 def kernel_RBF(X1, X2, sigma=1):
-    raise NotImplementedError()
+    n1,d = X1.shape
+    n2,d = X2.shape
+    Z = np.zeros((n1,n2))
+    for i in range(n1):
+        for j in range(n2):
+            Z[i,j] = np.exp(-((np.sum((X1[i] - X2[j])**2))/(2*sigma)))
+    return Z
 
 def kernel_poly(X1, X2, p=2):
-    raise NotImplementedError()
+    return (1+X1@X2.T)**p
 
 def kernel_linear(X1, X2):
     return X1@X2.T
@@ -90,7 +96,3 @@ class kernelLogRegL2():
     def predict(self, Xtest):
         Ktest = self.kernel_fun(Xtest, self.X, **self.kernel_args)
         return np.sign(Ktest@self.u)
-
-
-
-
