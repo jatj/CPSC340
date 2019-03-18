@@ -80,3 +80,22 @@ class AlternativePCA(PCA):
 
 class RobustPCA(AlternativePCA):
     pass
+    def _fun_obj_z(self, z, w, X, k):
+        n,d = X.shape
+        Z = z.reshape(n,k)
+        W = w.reshape(k,d)
+
+        R = np.dot(Z,W) - X
+        f = np.sum((R**2+0.0001)**0.5)
+        g = np.dot(R/((R**2+0.0001)**0.5), W.transpose())
+        return f, g.flatten()
+
+    def _fun_obj_w(self, w, z, X, k):
+        n,d = X.shape
+        Z = z.reshape(n,k)
+        W = w.reshape(k,d)
+        
+        R = np.dot(Z,W) - X
+        f = np.sum((R**2+0.0001)**0.5)
+        g = np.dot(Z.transpose(), R/((R**2+0.0001)**0.5))
+        return f, g.flatten()

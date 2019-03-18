@@ -122,7 +122,45 @@ if __name__ == '__main__':
         utils.savefig("logRegRBFKernel_MaxTrain.png")
 
         utils.plotClassifier(maxTestModel, Xtrain, ytrain)
-        utils.savefig("logRegRBFKernel_MaxValidation.png")        
+        utils.savefig("logRegRBFKernel_MaxValidation.png")  
+
+    elif question == '3':
+        X = [
+            [-4, 2], 
+            [0,0],
+            [-2, 1],
+            [4, -2],
+            [2, -1]
+        ]
+        miu = np.mean(X, axis = 0)
+        X -= miu
+        U,s,Vh= np.linalg.svd(X.T@X)
+
+        x1 = [-3,2.5]
+        x1_ =  x1 - miu
+        x1Trans = x1@Vh[:1].T
+        x1Loss = np.sum((x1Trans@Vh[:1]-x1_)**2)
+        print(x1Loss)
+
+        x2 = [-3,2]
+        x2_ =  x2 - miu
+        x2Trans = x2@Vh[:1].T
+        x2Loss = np.sum((x2Trans@Vh[:1]-x2_)**2)
+        print(x2Loss)
+        
+        trans = X@Vh[:1].T
+        trans = np.insert(trans, 0, x1Trans[0])
+        trans = np.insert(trans, 0, x2Trans[0])
+
+        X = np.insert(X,0,x1, axis = 0)
+        X = np.insert(X,0,x2, axis = 0)
+        
+        # Original 2d data
+        plt.scatter(X[:,0], X[:,1])
+        plt.show()
+        # 1d transformation
+        plt.scatter(trans, np.ones(len(X)))
+        plt.show()
 
     elif question == '4.1': 
         X = load_dataset('highway.pkl')['X'].astype(float)/255
@@ -163,7 +201,7 @@ if __name__ == '__main__':
             ax[1,2].set_title('$|x_i-\hat{x_i}|$>threshold (L1)')
             ax[1,2].imshow((np.abs(X[i] - Xhat_robust[i])<threshold).reshape(h,w).T, cmap='gray', vmin=0, vmax=1)
 
-            utils.savefig('highway_{:03d}.jpg'.format(i))
+            utils.savefig('highway_{:03d}.png'.format(i))
 
     else:
         print("Unknown question: %s" % question)    
