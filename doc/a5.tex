@@ -240,9 +240,14 @@ where $\Gamma$ is the ``gamma" function (which is always non-negative).
 p(y_i | w^Tx_i) = \frac{\exp(y_iw^Tx_i)\exp(-\exp(w^Tx_i))}{y_i!}, \quad p(w_j) \propto \kappa.
 \]
 (This prior is 	``improper'' since $w\in\R^d$ but it doesn't integrate to 1 over this domain, but nevertheless the posterior will be a proper distribution.)
+\ans{
+    \[ f(w) = - \sum_{i=1}^n \log \left[ \frac{\exp(y_iw^Tx_i)\exp(-\exp(w^Tx_i))}{y_i!} \right] - \log(k) \]
+    \[ f(w) = - \sum_{i=1}^n \left[ \log \left( \frac{1}{y_i!} \right) + \log \left( \exp(y_iw^Tx_i) \right) + \log \left( \exp(-\exp(w^Tx_i)) \right) \right] - \log(k) \]
+    \[ f(w) = - \sum_{i=1}^n \log \left( \frac{1}{y_i!} \right) - \sum_{i=1}^n \log \left( \exp(y_iw^Tx_i) \right) - \sum_{i=1}^n \log \left( \exp(-\exp(w^Tx_i)) \right) - \log(k) \]
+    \[ f(w) = - || \log \left( \frac{1}{y!} \right) ||_1 - \sum_{i=1}^n y_iw^Tx_i + \sum_{i=1}^n \exp(w^Tx_i) - \log(k) \]
+    \[ f(w) = - || \log \left( \frac{1}{y!} \right) ||_1 - y^TXw + || \exp(Xw) ||_1 - \log(k) \]
 }
-
-
+}
 
 \section{Principal Component Analysis}
 \rubric{reasoning:3}
