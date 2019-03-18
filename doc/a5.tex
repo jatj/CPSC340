@@ -90,14 +90,48 @@ We use \blu{blue} to highlight the deliverables that you must answer/do/submit w
 \section{Kernel Logistic Regresion}
 
 If you run \verb|python main.py -q 1| it will load a synthetic 2D data set, split it into train/validation sets, and then perform regular logistic regression and kernel logistic regression (both without an intercept term, for simplicity). You'll observe that the error values and plots generated look the same since the kernel being used is the linear kernel (i.e., the kernel corresponding to no change of basis).
-
+\clearpage
 \subsection{Implementing kernels}
 \rubric{code:5}
 
  \blu{Implement the polynomial kernel and the RBF kernel for logistic regression. Report your training/validation errors and submit the plots generated for each case}. You should use the hyperparameters $p=2$ and $\sigma=0.5$ respectively, and $\lambda=0.01$ for the regularization strength.
-
-
-
+ \ans{
+    \begin{center}
+        \lstinputlisting[firstline=47,lastline=57]{../code/logReg.py}
+    \end{center}
+    \begin{figure}[htp]
+        \begin{subfigure}[b]{0.5\textwidth} \color{ans}
+            \centerfig{1.0}{../figs/logRegPolynomialKernel.png}
+            {
+              \begin{center}
+                 Polynomial Kernel
+              \end{center}
+            }
+          \label{fig:1}
+        \end{subfigure}
+        %
+        \begin{subfigure}[b]{0.5\textwidth} \color{ans}
+            \centerfig{1.0}{../figs/logRegRBFKernel.png}
+           {
+               \begin{center}
+                RBF Kernel
+               \end{center}
+           }
+          \label{fig:2}
+        \end{subfigure}
+    \end{figure}
+    \scriptsize
+    \setlength{\tabcolsep}{2pt}
+    \begin{center}
+    \begin{tabular}{SSS} \toprule
+       {} & {Training error} & {Validation Error} \\ \midrule
+       {Polynomial kernel} & 0.183 & 0.170 \\ \midrule
+       {RBF kernel} & 0.150 & 0.130 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+ }
+ \clearpage
 \subsection{Hyperparameter search}
 \rubric{code:3}
 
@@ -105,10 +139,49 @@ For the RBF kernel logistic regression, consider the hyperparameters values $\si
 
 Note: on the job you might choose to use a tool like scikit-learn's \texttt{GridSearchCV} to implement the grid search, but here we are asking you to implement it yourself by looping over the hyperparameter values.
 
+\ans{
+    \begin{figure}[htp]
+        \begin{subfigure}[b]{0.5\textwidth} \color{ans}
+            \centerfig{1.0}{../figs/logRegRBFKernel_MaxTrain.png}
+            {
+              \begin{center}
+                 RBF Kernel with best training error
+              \end{center}
+            }
+          \label{fig:1}
+        \end{subfigure}
+        %
+        \begin{subfigure}[b]{0.5\textwidth} \color{ans}
+            \centerfig{1.0}{../figs/logRegRBFKernel_MaxValidation.png}
+           {
+               \begin{center}
+                RBF Kernel with best validation error
+               \end{center}
+           }
+          \label{fig:2}
+        \end{subfigure}
+    \end{figure}
+    \scriptsize
+    \setlength{\tabcolsep}{2pt}
+    \begin{center}
+    \begin{tabular}{SSSSS} \toprule
+       {} & {Training error} & {Validation Error} & {$\sigma$} & {$\lambda$} \\ \midrule
+       {Best training} & 0.017 & 0.210 & 0.010 & 0.000 \\ \midrule
+       {Best validation} & 0.113 & 0.110 & 0.100 & 0.000 \\ \bottomrule
+    \end{tabular}
+    \end{center}
+    \normalsize
+}
+
+
 \subsection{Reflection}
 \rubric{reasoning:1}
 
 Briefly discuss the best hyperparameters you found in the previous part, and their associated plots. Was the training error minimized by the values you expected, given the ways that $\sigma$ and $\lambda$ affect the fundamental tradeoff?
+
+\ans{
+    % JATJ: complete
+}
 
 
 \section{MAP Estimation}
@@ -130,16 +203,38 @@ which is the negative log likelihood (NLL) under these assumptions (ignoring an 
 \[
 p(y_i \mid x_i, w) = \frac 1 2 \exp(-|w^Tx_i - y_i|), \quad p(w_j) = \frac{1}{\sqrt{2\pi}\sigma}\exp\left(-\frac{w_j^2}{2\sigma^2}\right).
 \]
+\ans{
+    \[ f(w) = -\sum_{i=1}^{n} \log \left[ \half{\exp(-| w^Tx_i - y_i |)} \right] - \log \left[ \frac{1}{2\pi\sigma} \exp(-\sum_{j=1}^d \frac{w_j^2}{2\sigma^2}) \right] \]
+    \[ f(w) = -\sum_{i=1}^{n} \left[ \log(\half) + \log(\exp(-| w^Tx_i - y_i |)) \right] - \log(\frac{1}{2\pi\sigma}) - \log \left[ \exp(-\sum_{j=1}^d \frac{w_j^2}{2\sigma^2}) \right] \]
+    \[ f(w) = -\sum_{i=1}^{n} \left[ constant + \log(\exp(-| w^Tx_i - y_i |)) \right] - constant + \sum_{j=1}^d \frac{w_j^2}{2\sigma^2} \]
+    \[ f(w) =  constant -\sum_{i=1}^{n} \left[ -| w^Tx_i - y_i |) \right] - constant + \frac{1}{2\sigma^2} \sum_{j=1}^d w_j^2 \]
+    \[ f(w) =  constant +\sum_{i=1}^{n} \left[ | w^Tx_i - y_i |) \right] + \frac{1}{2\sigma^2} || w ||_2^2 \]
+    \[ f(w) =  constant + || Xw - Y ||_1 + \frac{1}{2\sigma^2} || w ||_2^2 \]
+}
 \item We use a Gaussian likelihood where each datapoint has its own variance $\sigma_i^2$, and where we use a zero-mean Laplace prior with a vairance of $\lambda^{-1}$.
 \[
 p(y_i \mid x_i,w) = \frac{1}{\sqrt{2\sigma_i^2\pi}}\exp\left(-\frac{(w^Tx_i - y_i)^2}{2\sigma_i^2}\right), \quad p(w_j) = \frac{\lambda}{2}\exp(-\lambda|w_j|).
 \]
 You can use $\Sigma$ as a diagonal matrix that has the values $\sigma_i^2$ along the diagonal.
+\ans{
+    \[ f(w) = - \sum_{i=1}^n \log \left[ \frac{1}{\sqrt{2\sigma_i^2 \pi}} \exp(-\frac{(w^Tx_i-y_i)^2}{2\sigma_i^2}) \right] - \log \left[ \frac{\lambda}{2} \exp \left(-\sum_{j=1}^d \lambda | w_j| \right) \right] \]
+    \[ f(w) = - \sum_{i=1}^n \left[ \log \left(\frac{1}{\sqrt{2\sigma_i^2 \pi}}\right) + \log \left( \exp(-\frac{(w^Tx_i-y_i)^2}{2\sigma_i^2}) \right) \right] - \log \left(\frac{\lambda}{2}\right) - log \left[ \exp \left(-\sum_{j=1}^d \lambda | w_j| \right) \right] \]
+    \[ f(w) = - \sum_{i=1}^n \left[ constant -\frac{(w^Tx_i-y_i)^2}{2\sigma_i^2} \right] - constant + \sum_{j=1}^d \lambda | w_j|  \]
+    \[ f(w) = constant - \sum_{i=1}^n \left[ -\frac{(w^Tx_i-y_i)^2}{2\sigma_i^2} \right] + \sum_{j=1}^d \lambda | w_j|  \]
+    \[ f(w) = constant + || \frac{(Xw - Y)^2}{2\Sigma} ||_1 + \sum_{j=1}^d \lambda | w_j|  \]
+}
 \item We use a (very robust) student $t$ likelihood with a mean of $w^Tx_i$ and $\nu$ degrees of freedom, and a zero-mean Gaussian prior with a variance of $\lambda^{-1}$,
 \[
 p(y_i | x_i, w) = \frac{\Gamma\left(\frac{\nu + 1}{2}\right)}{\sqrt{\nu\pi}\Gamma\left(\frac \nu 2\right)}\left(1 + \frac{(w^Tx_i - y_i)^2}{\nu}\right)^{-\frac{\nu+1}{2}}, \quad p(w_j) = \frac{\sqrt{\lambda}}{\sqrt{2\pi}}\exp\left(-\lambda\frac{w_j^2}{2}\right).
 \]
 where $\Gamma$ is the ``gamma" function (which is always non-negative).
+\ans{
+    \[ f(w) = - \sum_{i=1}^n \left[ \log\left(\frac{\Gamma(\frac{\nu+1}{2})}{\sqrt(\nu\pi)\Gamma(\frac{\nu}{2})}  \left(1 + \frac{(w^Tx_i - y_i)^2}{\nu}\right)^{-\frac{\nu+1}{2}} \right) \right] - \log \left[ \frac{\sqrt{\lambda}}{\sqrt{2\pi}} \exp\left(-\sum_{j=1}^d \lambda \frac{w_j^2}{2}\right)\right]  \]
+    \[ f(w) = - \sum_{i=1}^n \left[ \log\left(\frac{\Gamma(\frac{\nu+1}{2})}{\sqrt(\nu\pi)\Gamma(\frac{\nu}{2})} \right) + \log \left( \left(1 + \frac{(w^Tx_i - y_i)^2}{\nu}\right)^{-\frac{\nu+1}{2}} \right) \right] - \log \left( \frac{\sqrt{\lambda}}{\sqrt{2\pi}}\right) - \log \left[ \exp\left(-\sum_{j=1}^d \lambda \frac{w_j^2}{2}\right)\right]  \]
+    \[ f(w) = - \sum_{i=1}^n \left[ constant + \log \left( \left(1 + \frac{(w^Tx_i - y_i)^2}{\nu}\right)^{-\frac{\nu+1}{2}} \right) \right] - constant + \sum_{j=1}^d \lambda \frac{w_j^2}{2} \]
+    \[ f(w) = constant - \sum_{i=1}^n \left[ \log \left( \left(1 + \frac{(w^Tx_i - y_i)^2}{\nu}\right)^{-\frac{\nu+1}{2}} \right) \right] + \frac{\lambda}{2} ||w||_2^2 \]
+    \[ f(w) = constant - \log \left( \left(1 + \frac{1}{\nu}|| Xw - Y ||_2^2\right)^{-\frac{\nu+1}{2}} \right) + \frac{\lambda}{2} ||w||_2^2 \]
+}
 \item We use a Poisson-distributed likelihood (for the case where $y_i$ represents counts), and we use a uniform prior for some constant $\kappa$,
 \[
 p(y_i | w^Tx_i) = \frac{\exp(y_iw^Tx_i)\exp(-\exp(w^Tx_i))}{y_i!}, \quad p(w_j) \propto \kappa.
@@ -169,8 +264,17 @@ Recall that with PCA we usually assume that the PCs are normalized ($\norm{w} = 
 \blu{
 \enum{
 \item What is the first principal component?
+\ans{
+    % JATJ: complete
+}
 \item What is the reconstruction loss (L2 norm squared) of the point (-3, 2.5)? (Show your work.)
+\ans{
+    % JATJ: complete
+}
 \item What is the reconstruction loss (L2 norm squared) of the point (-3, 2)? (Show your work.)
+\ans{
+    % JATJ: complete
+}
 }
 }
 Hint: it may help (a lot) to plot the data before you start this question.
