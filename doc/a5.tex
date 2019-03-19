@@ -356,15 +356,78 @@ This work implements an alternating minimization approach to minimizing the (L2)
 \]
 where $\epsilon$ controls the accuracy of the approximation (a typical value of $\epsilon$ is $0.0001$).
 
+\begin{center}
+    \lstinputlisting[firstline=81,lastline=102]{../code/pca.py}
+\end{center}
 
+\ans{
+    Losses of alternative pca
+    \begin{center}
+    \begin{tabular}{cc}
+    $Interation$ & $loss$\\
+    \hline
+    0 &  8020.7 \\
+    1 &  7146.9 \\
+    2 &  6940.3 \\
+    3 &  6861.5 \\
+    4 &  6826.9 \\
+    5 &  6804.4 \\
+    6 &  6785.7 \\
+    7 &  6770.5 \\
+    8 &  6764.5 \\
+    9 &  6764.5 \\
+    \end{tabular}
+    \end{center}
+    Losses of robsut pca
+    \begin{center}
+    \begin{tabular}{cc}
+    $Interation$ & $loss$\\
+    \hline
+    0 & 116386.2 \\
+    1 & 96108.6 \\
+    2 & 94137.2 \\
+    3 & 93078.1 \\
+    4 & 92427.2 \\
+    5 & 91884.5 \\
+    6 & 91449.0 \\
+    7 & 91211.6 \\
+    8 & 91068.3 \\
+    9 & 91000.1 \\
+    \end{tabular}
+    \end{center}
+    \centerfig{0.5}{../figs/highway_000.png}
+    \centerfig{0.5}{../figs/highway_001.png}
+    \centerfig{0.5}{../figs/highway_002.png}
+    \centerfig{0.5}{../figs/highway_003.png}
+    \centerfig{0.5}{../figs/highway_004.png}
+    \centerfig{0.5}{../figs/highway_005.png}
+    \centerfig{0.5}{../figs/highway_006.png}
+    \centerfig{0.5}{../figs/highway_007.png}
+    \centerfig{0.5}{../figs/highway_008.png}
+    \centerfig{0.5}{../figs/highway_009.png}
+}
 
 \subsection{Reflection}
 \rubric{reasoning:3}
 
 \enum{
-\item Briefly explain why using the L1 loss might be more suitable for this task than L2. 
-\item How does the number of video frames and the size of each frame relate to $n$, $d$, and/or $k$?
-\item What would the effect be of changing the threshold (see code) in terms of false positives (cars we identify that aren't really there) and false negatives (real cars that we fail to identify)?
+\item Briefly explain why using the L1 loss might be more suitable for this task than L2. \\
+\ans{
+    The L2 norm gives to much attention to data that is not 
+}
+\item How does the number of video frames and the size of each frame relate to $n$, $d$, and/or $k$? \\
+\ans{
+    $n$ is the number of frames, $d$ depends on the size of the image. And $k$ 
+    depends on the whole dataset and how accurate do we want to represent our 
+    data, if we one super accurate representation we will use more, PCs than if we want a no so 
+    accurate representation.
+}
+\item What would the effect be of changing the threshold (see code) in terms of false positives (cars we identify that aren't really there) and false negatives (real cars that we fail to identify)? \\
+\ans{
+    The threshold is the color that a pixel has to be considered as an object on the highway. So if 
+    we change it, it will either consider more things as an object or the highway (false positive) 
+    or make harder to find objects on the highway (false negatives).
+}
 }
 
 \section{Very-Short Answer Questions}
