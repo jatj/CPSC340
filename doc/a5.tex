@@ -166,8 +166,8 @@ Note: on the job you might choose to use a tool like scikit-learn's \texttt{Grid
     \begin{center}
     \begin{tabular}{SSSSS} \toprule
        {} & {Training error} & {Validation Error} & {$\sigma$} & {$\lambda$} \\ \midrule
-       {Best training} & 0.017 & 0.210 & 0.010 & 0.000 \\ \midrule
-       {Best validation} & 0.113 & 0.110 & 0.100 & 0.000 \\ \bottomrule
+       {Best training} & 0.017 & 0.210 & 0.010 & 0.0001 \\ \midrule
+       {Best validation} & 0.113 & 0.110 & 0.100 & 0.0001 \\ \bottomrule
     \end{tabular}
     \end{center}
     \normalsize
@@ -180,7 +180,11 @@ Note: on the job you might choose to use a tool like scikit-learn's \texttt{Grid
 Briefly discuss the best hyperparameters you found in the previous part, and their associated plots. Was the training error minimized by the values you expected, given the ways that $\sigma$ and $\lambda$ affect the fundamental tradeoff?
 
 \ans{
-    % JATJ: complete
+    As we can tell by the images above, the value of $\lambda$ doesn't change, it appears to 
+    be the sweet spot for this data set. On the other hand the value of $\sigma$ changes, as it grows
+    the validation training error becomes lower but the approximation error also grows. \\ \\ 
+    So we can conclude that as $\sigma$ grows from 0.01 to 0.1 the approximation error becomes smaller 
+    which yields a better validation error.
 }
 
 
@@ -268,17 +272,53 @@ $x_1$ & $x_2$\\
 Recall that with PCA we usually assume that the PCs are normalized ($\norm{w} = 1$), we need to center the data before we apply PCA, and that the direction of the first PC is the one that minimizes the orthogonal distance to all data points.
 \blu{
 \enum{
-\item What is the first principal component?
+\item What is the first principal component? \\
 \ans{
-    % JATJ: complete
+    The first principal component is $(\frac{-2}{\sqrt{5}}, \frac{1}{\sqrt{5}})$
 }
 \item What is the reconstruction loss (L2 norm squared) of the point (-3, 2.5)? (Show your work.)
 \ans{
-    % JATJ: complete
+    Using the first principal component we transform the point $x = (-3, 2.5)$,
+    \[ 
+        \begin{bmatrix} 
+            -3 & 2.5
+        \end{bmatrix}
+        \times  
+        \begin{bmatrix} 
+            -\frac{2}{\sqrt{5}} \\
+            \frac{1}{\sqrt{5}}
+        \end{bmatrix}     
+        = \frac{8.5}{\sqrt{5}}
+    \]
+    Now we calculate the error with the L2 norm squared of $x \text{and} \hat{x}$
+    \[ 
+        loss = \left|\left| \frac{8.5}{\sqrt{5}} \times \begin{bmatrix} \frac{-2}{\sqrt{5}} \\ \frac{1}{\sqrt{5}} \end{bmatrix} - \begin{bmatrix} -3 \\ 2.5 \end{bmatrix} \right|\right|_2^2 = 
+        \left|\left| \begin{bmatrix} \frac{-17}{5} \\ \frac{8.5}{5} \end{bmatrix} - \begin{bmatrix} -3 \\ 2.5 \end{bmatrix} \right|\right|_2^2 = 
+        \left|\left| \begin{bmatrix} \frac{-2}{5} \\ \frac{-4}{5}\end{bmatrix} \right|\right|_2^2 = 
+        \frac{4}{25} + \frac{16}{25} = \frac{20}{25} = \fbox{0.8}
+    \]
 }
 \item What is the reconstruction loss (L2 norm squared) of the point (-3, 2)? (Show your work.)
 \ans{
-    % JATJ: complete
+    Using the first principal component we transform the point $x = (-3, 2)$,
+    \[ 
+        \begin{bmatrix} 
+            -3 & 2
+        \end{bmatrix}
+        \times  
+        \begin{bmatrix} 
+            -\frac{2}{\sqrt{5}} \\
+            \frac{1}{\sqrt{5}}
+        \end{bmatrix}     
+        = \frac{8}{\sqrt{5}}
+    \]
+    Now we calculate the error with the L2 norm squared of $x \text{and} \hat{x}$
+    \[ 
+        loss = \left|\left| \frac{8}{\sqrt{5}} \times \begin{bmatrix} \frac{-2}{\sqrt{5}} \\ \frac{1}{\sqrt{5}} \end{bmatrix} - \begin{bmatrix} -3 \\ 2.5 \end{bmatrix} \right|\right|_2^2 = 
+        \left|\left| \begin{bmatrix} \frac{-17}{5} \\ \frac{8}{5} \end{bmatrix} - \begin{bmatrix} -3 \\ 2.5 \end{bmatrix} \right|\right|_2^2 = 
+        \left|\left| \begin{bmatrix} \frac{-1}{5} \\ \frac{-2}{5}\end{bmatrix} \right|\right|_2^2 = 
+        \frac{1}{25} + \frac{4}{25} = \frac{5}{25} = \fbox{0.2}
+    \]
 }
 }
 }
