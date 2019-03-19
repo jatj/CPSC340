@@ -413,8 +413,9 @@ where $\epsilon$ controls the accuracy of the approximation (a typical value of 
 \enum{
 \item Briefly explain why using the L1 loss might be more suitable for this task than L2. \\
 \ans{
-    The L2 norm gives too much attention to data that is probably not a car in the highway. But the 
-    L1 loss doesn't do this so it is more likely to give better performance at detecting changes.
+    The L2 norm gives too much attention to data that is probably just noise that change 
+    by a little bit on each frame. But the L1 loss doesn't do this so it is more likely to 
+    give better performance at detecting changes on the frames.
 }
 \item How does the number of video frames and the size of each frame relate to $n$, $d$, and/or $k$? \\
 \ans{
