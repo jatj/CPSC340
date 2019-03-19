@@ -434,23 +434,64 @@ where $\epsilon$ controls the accuracy of the approximation (a typical value of 
 \rubric{reasoning:11}
 
 \enum{
-\item Assuming we want to use the original features (no change of basis) in a linear model, what is an advantage of the ``other'' normal equations over the original normal equations?
-\item In class we argued that it's possible to make a kernel version of $k$-means clustering. What would an advantage of kernels be in this context?
-\item In the language of loss functions and regularization, what is the difference between MLE and MAP?
-\item What is the difference between a generative model and a discriminative model?
-\item With PCA, is it possible for the loss to increase if $k$ is increased? Briefly justify your answer.
-\item What does ``label switching'' mean in the context of PCA?
-\item Why doesn't it make sense to do PCA with $k > d$?
-\item In terms of the matrices associated with PCA ($X$, $W$, $Z$, $\hat{X}$), where would an ``eigenface'' be stored?
-\item What is an advantage and a disadvantage of using stochatic gradient over SVD when doing PCA?
-\item Which of the following step-size sequences lead to convergence of stochastic gradient to a stationary point?
+\item Assuming we want to use the original features (no change of basis) in a linear model, what is an advantage of the ``other'' normal equations over the original normal equations?  \\
+\ans{
+    If we have a pretty huge number of features and a small number of examples, so $n < d$. 
+    It will be faster to compute.
+}
+\item In class we argued that it's possible to make a kernel version of $k$-means clustering. What would an advantage of kernels be in this context?  \\
+\ans{
+    That we are able to find a global optima.
+}
+\item In the language of loss functions and regularization, what is the difference between MLE and MAP?  \\
+\ans{
+    MLE is just a loss function, and MAP is a loss function with regularization.
+}
+\item What is the difference between a generative model and a discriminative model?  \\
+\ans{
+    A generative model, models how the data is created so it uses probability rules to create predictions 
+    on what will be the features of some new example of data. Whereas the discriminative model fixes 
+    the features and create a model that correctly represent the provided features and also allow us 
+    to interpolate and extrapolate data.
+}
+\item With PCA, is it possible for the loss to increase if $k$ is increased? Briefly justify your answer.  \\
+\ans{
+    It shouldn't be possible. As $k$ grows you are just incrementing the ways in how you represent the 
+    data, this yields to more accurate representations of the data which result in a lower loss.
+}
+\item What does ``label switching'' mean in the context of PCA?  \\
+\ans{
+    We can fine multiple values of $Z$ and $W$ that yield a correct $\hat{X}$
+}
+\item Why doesn't it make sense to do PCA with $k > d$?  \\
+\ans{
+    Because with $k = d$ you can totally represent the data. There is no need to transform the data 
+    so it will be just a waste of resources.
+}
+\item In terms of the matrices associated with PCA ($X$, $W$, $Z$, $\hat{X}$), where would an ``eigenface'' be stored?  \\
+\ans{
+    The eigenfaces would be stored on $Z$.
+}
+\item What is an advantage and a disadvantage of using stochatic gradient over SVD when doing PCA?  \\
+\ans{
+    A disadvantage is that the solution using stochastic gradient might not be unique, whereas the 
+    SVD leads to a unique solution. An advantage of stochastic gradient is that it should be faster 
+    to compute which allow us to use huge data sets.
+}
+\item Which of the following step-size sequences lead to convergence of stochastic gradient to a stationary point?  \\
 \enum{
 \item $\alpha^t = 1/t^2$.
 \item $\alpha^t = 1/t$.
 \item $\alpha^t = 1/\sqrt{t}$.
 \item $\alpha^t = 1$.
 }
-\item We discussed ``global'' vs. ``local'' features for e-mail classification. What is an advantge of using global features, and what is advantage of using local features?
+\ans{
+    Option c
+}
+\item We discussed ``global'' vs. ``local'' features for e-mail classification. What is an advantge of using global features, and what is advantage of using local features? \\
+\ans{
+    Global features lead you to a more robust model, whereas local features can result in lower losses.
+}
 }
 
 
