@@ -113,10 +113,10 @@ if __name__ == '__main__':
         
         print("\nRBF max: Training error %.3f" % maxTrain)
         print("RBF max: Validation error %.3f" % maxTrain_test)
-        print("sigma: %.3f, lambda: %.3f" % (maxTrainParams[0], maxTrainParams[1]))
+        print("sigma: %.10f, lambda: %.10f" % (maxTrainParams[0], maxTrainParams[1]))
         print("\nRBF max: Validation error %.3f" % maxTest)
         print("RBF max: Training error %.3f" % maxTest_train)
-        print("sigma: %.3f, lambda: %.3f" % (maxTestParams[0], maxTestParams[1]))
+        print("sigma: %.10f, lambda: %.10f" % (maxTestParams[0], maxTestParams[1]))
 
         utils.plotClassifier(maxTrainModel, Xtrain, ytrain)
         utils.savefig("logRegRBFKernel_MaxTrain.png")
