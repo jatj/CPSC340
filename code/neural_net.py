@@ -111,3 +111,40 @@ class NeuralNet():
 
 
 
+class NeuralNetSGD(NeuralNet):
+    def __init__(self, batch_size, learning_rate, epochs, hidden_layer_sizes, lammy=1, max_iter=100, verbose=False):
+        super().__init__(hidden_layer_sizes, lammy=lammy, max_iter=max_iter)
+        self.batch_size = batch_size
+        self.learning_rate = learning_rate
+        self.epochs = epochs
+        self.verbose = verbose
+
+    def getMiniBatch(self, X, y):
+        indices = np.random.randint(0,len(X), 500)
+        return (X[indices,:],y[indices,:])
+
+    def fit(self, X, y):
+        if y.ndim == 1:
+            y = y[:,None]
+            
+        self.layer_sizes = [X.shape[1]] + self.hidden_layer_sizes + [y.shape[1]]
+        self.classification = y.shape[1]>1 # assume it's classification iff y has more than 1 column
+
+        # random init
+        scale = 0.01
+        weights = list()
+        for i in range(len(self.layer_sizes)-1):
+            W = scale * np.random.randn(self.layer_sizes[i+1],self.layer_sizes[i])
+            b = scale * np.random.randn(1,self.layer_sizes[i+1])
+            weights.append((W,b))
+        weights_flat = flatten_weights(weights)
+
+        for i in range(self.epochs):
+            X_, y_ = self.getMiniBatch(X, y)
+            # utils.check_gradient(self, X, y, len(weights_flat), epsilon=1e-6)
+            weights_flat_new, f = findMin.findMin(self.funObj, weights_flat, self.max_iter, X_, y_)#, verbose=self.verbose)
+            if (self.verbose):
+                print('Epoch: {}'.format(i+1))
+                print('loss: {}'.format(f))
+
+        self.weights = unflatten_weights(weights_flat_new, self.layer_sizes)

@@ -9,10 +9,15 @@
 \usepackage{parskip}
 \usepackage{amssymb}
 \usepackage{nicefrac}
-\usepackage{listings} % For displaying code
 \usepackage{algorithm2e} % pseudo-code
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{bookmark}
+\usepackage{hyperref}
+\usepackage[procnames]{listings}
 
-% Answers
 \def\rubric#1{\gre{Rubric: \{#1\}}}{}
 
 % Colors
@@ -22,7 +27,26 @@
 \def\gre#1{{\color{gre}#1}}
 \definecolor{red}{rgb}{1,0,0}
 \def\red#1{{\color{red}#1}}
+\definecolor{ans}{rgb}{0,.5,0}%{0.545,0.27,0.074}
+\def\ans#1{{\color{ans}#1}}
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
 \def\norm#1{\|#1\|}
+
+% Configuration
+\usepackage[font={color=ans,bf},figurename=Fig.,labelfont={it}]{caption}
+\lstset{
+    language=Python, 
+    basicstyle=\ttfamily\small, 
+    keywordstyle=\color{keywords},
+    commentstyle=\color{comments},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    identifierstyle=\color{green},
+    procnamekeys={def,class}
+}
 
 % Math
 \def\R{\mathbb{R}}
@@ -31,10 +55,12 @@
 \newcommand{\mat}[1]{\begin{bmatrix}#1\end{bmatrix}}
 \newcommand{\alignStar}[1]{\begin{align*}#1\end{align*}}
 \def\half{\frac 1 2}
+\def\cond{\; | \;}
 
 % LaTeX
 \newcommand{\fig}[2]{\includegraphics[width=#1\textwidth]{#2}}
 \newcommand{\centerfig}[2]{\begin{center}\includegraphics[width=#1\textwidth]{#2}\end{center}}
+\newcommand{\matCode}[1]{\lstinputlisting[language=Matlab]{a2f/#1.m}}
 \def\items#1{\begin{itemize}#1\end{itemize}}
 \def\enum#1{\begin{enumerate}#1\end{enumerate}}
 
@@ -67,13 +93,29 @@ We label some points, but because of the binary features the scatterplot shows u
 \rubric{reasoning:2}
 
 Use scikit-learn's PCA to reduce this 85-dimensional dataset down to 2 dimensions, and plot the result. Briefly comment on the results (just say anything that makes sense and indicates that you actually looked at the plot).
+\centerfig{.5}{../figs/pca_2_features.png}
+\ans{
+    The image above shows the 2 principal components of the provided data set. It is a much better representation of the data, 
+    than just the visualization of two random features. By using PCA we can see a remarkable separation between acuatic and 
+    terrestrial animals. We can even notice that animals that live on both water and land are on the boundaries, like otter, 
+    beaver, polar bear, hippopotamous. \\ 
+    But this representation doesn't make a good work separating the terrestrial animal, we can see grizzly bear, closer to 
+    some cats, rather than the polar bear.
+}
 
 \subsection{Data Compression}
 \rubric{reasoning:2}
 
 \blu{\enum{
-\item How much of the variance is explained by our 2-dimensional representation from the previous question?
-\item How many PCs are required to explain 50\% of the variance in the data?
+\item How much of the variance is explained by our 2-dimensional representation from the previous question? \\
+\ans{
+    By using two components we can explain 32.31\% of the variance.
+}
+\item How many PCs are required to explain 50\% of the variance in the data? \\
+\ans{
+    Using 4 components we can represent 48.62\% of the variance, furthermore by using 5 components
+    we can represent 54.46\% of the data.
+}
 }}
 
 
@@ -88,8 +130,13 @@ f(Z) =  \frac{1}{2}\sum_{i=1}^n\sum_{j=i+1}^n (  \norm{z_i - z_j} - \norm{x_i - 
  The result of applying MDS is shown below.
 \centerfig{.5}{../figs/MDS_animals.png}
 Although this visualization isn't perfect (with ``gorilla'' being placed close to the dogs and ``otter'' being placed close to two types of bears), this visualization does organize the animals in a mostly-logical way.
-\blu{Compare the MDS objective for the MDS solution vs. the PCA solution; is it indeed lower for the MDS solution?} 
-
+\blu{Compare the MDS objective for the MDS solution vs. the PCA solution; is it indeed lower for the MDS solution?}  \\
+\ans{
+    By computing the objective function with the PCA solution the value is 4942.1954, and we can notice a big improvement 
+    by calling it on the MDS solution with a value of 1776.8183. It was reduced by more than one half.
+    %MDS does a much better work representing the dataset on 2 dimensions, aside the difference between acuatic and terrestrial animals, we 
+    %now notice that lion, leopard, tiger, bobcat and fox are close.
+}
 \subsection{ISOMAP}
 \rubric{code:10}
 
@@ -107,8 +154,9 @@ This function requires an $n \times n$ matrix giving the weights on each edge (u
 Note that ISOMAP uses an undirected graph, while the $k$-nearest neighbour graph might be asymmetric.
 One of the usual heuristics to turn this into a undirected graph is to include an edge $i$ to $j$ if $i$ is a KNN of $j$ or if $j$ is a KNN of $i$.
 (Another possibility is to include an edge only if $i$ and $j$ are mutually KNNs.)
-
-
+\centerfig{.5}{../figs/ISOMAP2_animals.png}
+\centerfig{.5}{../figs/ISOMAP3_animals.png}
+% JATJ: Complete
 
 \subsection{t-SNE}
 \rubric{reasoning:1}
@@ -116,12 +164,17 @@ One of the usual heuristics to turn this into a undirected graph is to include a
 Try running scikit-learn's t-SNE on this dataset as well. \blu{Submit the plot from running t-SNE. Then, briefly comment on PCA vs. MDS vs. ISOMAP vs. t-SNE for dimensionality reduction on this particular data set. In your opinion, which method did the best job and why?}
 
 Note: There is no single correct answer here! Also, please do not write more than 3 sentences.
-
+\centerfig{.5}{../figs/tsne_2_features.png}
+% JATJ: Complete
 
 \subsection{Sensitivity to Initialization}
 \rubric{reasoning:2}
 
-For each of the four methods (PCA, MDS, ISOMAP, t-SNE) tried above, which ones give different results when you re-run the code? Does this match up with what we discussed in lectures, about which methods are sensitive to initialization and which ones aren't? Briefly discuss.
+For each of the four methods (PCA, MDS, ISOMAP, t-SNE) tried above, which ones give different results when you re-run the code? Does this match up with what we discussed in lectures, about which methods are sensitive to initialization and which ones aren't? Briefly discuss. \\
+\ans{
+    The only one of the previous methods that is sensitive to initialization is the t-SNE.
+}
+% JATJ: Complete
 
 
 \section{Neural Networks}
@@ -137,6 +190,7 @@ Suppose that we train a neural network with sigmoid activations and one hidden l
 W = \mat{-2 & 2 & -1\\1 & -2 & 0}, v = \mat{3 \\1}.
 \]
 Assuming that we are doing regression, \blu{for a training example with features $x_i^T = \mat{-3 &-2 & 2}$ what are the values in this network of $z_i$, $h(z_i)$, and $\hat{y}_i$?}
+% JATJ: Complete
 
 \subsection{SGD for a Neural Network: implementation}
 \rubric{code:5}
@@ -144,6 +198,8 @@ Assuming that we are doing regression, \blu{for a training example with features
 
 If you run \texttt{python main.py -q 2} it will train a one-hidden-layer neural network on the MNIST handwritten digits data set using the \texttt{findMin} gradient descent code from your previous assignments. After running for the default number of gradient descent iterations (100), it tends to get a training and test error of around 5\% (depending on the random initialization). 
 \blu{Modify the code to instead use stochastic gradient descent. Use a minibatch size of 500 (which is 1\% of the training data) and a constant learning rate of $\alpha=0.001$. Report your train/test errors after 10 epochs on the MNIST data.} 
+\ans{
+}
 
 \subsection{SGD for a Neural Network: discussion}
 \rubric{reasoning:1}

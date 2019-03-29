@@ -64,9 +64,17 @@ class ISOMAP(MDS):
         # Compute Euclidean distances
         D = utils.euclidean_dist_squared(X,X)
         D = np.sqrt(D)
-
-        # TODO: Convert these Euclidean distances into geodesic distances
-        
+        dijkstra = utils.dijkstra(D)
+        dijkstra_index = np.argsort(dijkstra)
+        D = np.full((n,n), np.infty)
+        for i in range(n):
+            k = 0
+            while (k < self.nn):
+                j = dijkstra_index[i, k]
+                k += 1
+                if (i == j):
+                    continue
+                D[i,j] = dijkstra[i,j]
 
         # If two points are disconnected (distance is Inf)
         # then set their distance to the maximum

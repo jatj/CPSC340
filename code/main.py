@@ -13,7 +13,7 @@ from sklearn.manifold import TSNE
 from sklearn.neural_network import MLPRegressor, MLPClassifier
 from sklearn.preprocessing import LabelBinarizer
 
-from neural_net import NeuralNet
+from neural_net import NeuralNet, NeuralNetSGD
 from manifold import MDS, ISOMAP
 import utils
 
@@ -47,6 +47,27 @@ if __name__ == '__main__':
         
         utils.savefig('two_random_features.png')
 
+    if question == "1.1":
+        dataset = load_dataset('animals.pkl')
+        X = dataset['X'].astype(float)
+        animals = dataset['animals']
+        n,d = X.shape
+        print("n =", n)
+        print("d =", d)
+
+        pca = PCA(2)
+        pca.fit(X)
+        Z = pca.transform(X)
+        print('Total variance: {}'.format(pca.explained_variance_ratio_.sum()))
+        plt.figure()
+        plt.scatter(Z[:,0], Z[:,1])
+        plt.xlabel("$PC_1$")
+        plt.ylabel("$PC_2$")
+        for i in range(n):
+            plt.annotate(animals[i], (Z[i,0], Z[i,1]))
+        # plt.show()
+        utils.savefig('pca_2_features.png')
+
 
     elif question == '1.3':
 
@@ -56,7 +77,17 @@ if __name__ == '__main__':
         n,d = X.shape
 
         model = MDS(n_components=2)
+
+        pca = PCA(2)
+        pca.fit(X)
+        z_ = pca.transform(X)
+        D = utils.euclidean_dist_squared(X,X)
+        D = np.sqrt(D)
+
         Z = model.compress(X)
+
+        print('Fun obj PCA: {}'.format(model._fun_obj_z(z_.flatten(), D)[0]))
+        print('Fun obj MDS: {}'.format(model._fun_obj_z(Z.flatten(), D)[0]))
 
         fig, ax = plt.subplots()
         ax.scatter(Z[:,0], Z[:,1])
@@ -86,6 +117,26 @@ if __name__ == '__main__':
                 ax.annotate(animals[i], (Z[i,0], Z[i,1]))
             utils.savefig('ISOMAP%d_animals.png' % n_neighbours)
 
+    elif question == '1.5':
+        dataset = load_dataset('animals.pkl')
+        X = dataset['X'].astype(float)
+        animals = dataset['animals']
+        n,d = X.shape
+        print("n =", n)
+        print("d =", d)
+
+        tsne = TSNE(2)
+        tsne.fit(X)
+        Z = tsne.fit_transform(X)
+        plt.figure()
+        plt.scatter(Z[:,0], Z[:,1])
+        plt.xlabel("$PC_1$")
+        plt.ylabel("$PC_2$")
+        for i in range(n):
+            plt.annotate(animals[i], (Z[i,0], Z[i,1]))
+        # plt.show()
+        utils.savefig('tsne_2_features.png')
+
     elif question == "2":
 
         with gzip.open(os.path.join('..', 'data', 'mnist.pkl.gz'), 'rb') as f:
@@ -97,7 +148,7 @@ if __name__ == '__main__':
         Y = binarizer.fit_transform(y)
 
         hidden_layer_sizes = [50]
-        model = NeuralNet(hidden_layer_sizes)
+        model = NeuralNetSGD(500, 0.001, 10, hidden_layer_sizes, max_iter=100, verbose=True)
 
         t = time.time()
         model.fit(X,Y)
