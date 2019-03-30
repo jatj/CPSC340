@@ -142,9 +142,9 @@ class NeuralNetSGD(NeuralNet):
         for i in range(self.epochs):
             X_, y_ = self.getMiniBatch(X, y)
             # utils.check_gradient(self, X, y, len(weights_flat), epsilon=1e-6)
-            weights_flat_new, f = findMin.findMin(self.funObj, weights_flat, self.max_iter, X_, y_)#, verbose=self.verbose)
+            weights_flat, f = findMin.stochasticFindMin(self.funObj, weights_flat, self.learning_rate, self.max_iter, X_, y_)#, verbose=self.verbose)
             if (self.verbose):
                 print('Epoch: {}'.format(i+1))
                 print('loss: {}'.format(f))
 
-        self.weights = unflatten_weights(weights_flat_new, self.layer_sizes)
+        self.weights = unflatten_weights(weights_flat, self.layer_sizes)

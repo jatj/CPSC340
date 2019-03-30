@@ -132,6 +132,7 @@ if __name__ == '__main__':
         plt.scatter(Z[:,0], Z[:,1])
         plt.xlabel("$PC_1$")
         plt.ylabel("$PC_2$")
+        plt.title('t-SNE')
         for i in range(n):
             plt.annotate(animals[i], (Z[i,0], Z[i,1]))
         # plt.show()
@@ -149,6 +150,8 @@ if __name__ == '__main__':
 
         hidden_layer_sizes = [50]
         model = NeuralNetSGD(500, 0.001, 10, hidden_layer_sizes, max_iter=100, verbose=True)
+        # model = NeuralNet(hidden_layer_sizes)
+
 
         t = time.time()
         model.fit(X,Y)
@@ -170,11 +173,50 @@ if __name__ == '__main__':
         X, y = train_set
         Xtest, ytest = test_set
 
-        print("n =", X.shape[0])
-        print("d =", X.shape[1])        
+        # print("n =", X.shape[0])
+        # print("d =", X.shape[1])        
 
-        model = MLPClassifier()
+        hidden_layer_sizes = (100,) # default (100,)
+        activation = 'relu' # default 'relu'
+        alpha = 0.0002 # default 0.0001
+        batch_size = 400 # default 'auto'
+        solver = 'adam' # default 'adam'
+        learning_rate = 'constant' # default 'constant'
+        learning_rate_init = 0.007 # 0.001
+        shuffle = True # default True
+        momentum = 0.9 # default 0.9
+        epsilon = 1e-8 # default 1e-8
+        max_iter = 200 # default 200
+        # Default time 60s
+        model = MLPClassifier(
+            hidden_layer_sizes=hidden_layer_sizes, 
+            activation=activation,
+            alpha=alpha,
+            batch_size=batch_size,
+            solver=solver,
+            learning_rate=learning_rate,
+            learning_rate_init=learning_rate_init,
+            momentum=momentum,
+            epsilon=epsilon,
+            max_iter=max_iter
+        )
+        # model = MLPClassifier()
+        print(
+            'hidden_layer_sizes: {}\n'.format(hidden_layer_sizes) + 
+            'activation: {}\n'.format(activation) + 
+            'alpha: {}\n'.format(alpha) + 
+            'batch_size: {}\n'.format(batch_size) + 
+            'solver: {}\n'.format(solver) + 
+            'learning_rate: {}\n'.format(learning_rate) +
+            'learning_rate_init: {}\n'.format(learning_rate_init) +
+            'shuffle: {}\n'.format(shuffle) + 
+            'momentum: {}\n'.format(momentum) + 
+            'epsilon: {}\n'.format(epsilon) + 
+            'max_iter: {}\n'.format(max_iter)
+        )
+        t = time.time()
         model.fit(X,y)
+        print("Fitting took %d seconds" % (time.time()-t))
 
         # Compute training error
         yhat = model.predict(X)
