@@ -156,7 +156,6 @@ One of the usual heuristics to turn this into a undirected graph is to include a
 (Another possibility is to include an edge only if $i$ and $j$ are mutually KNNs.)
 \centerfig{.5}{../figs/ISOMAP2_animals.png}
 \centerfig{.5}{../figs/ISOMAP3_animals.png}
-% JATJ: Complete
 
 \subsection{t-SNE}
 \rubric{reasoning:1}
@@ -165,16 +164,24 @@ Try running scikit-learn's t-SNE on this dataset as well. \blu{Submit the plot f
 
 Note: There is no single correct answer here! Also, please do not write more than 3 sentences.
 \centerfig{.5}{../figs/tsne_2_features.png}
-% JATJ: Complete
+\ans{
+    ISOMAP yields a better solution, each animal is being surrounded of all the 
+    animals with the similar characteristics, we can also notice that some animals that do not have  
+    too similar neighbours are being pushed away to the center. Like the otter, its closest neighbour 
+    is the beaver but also the walrus and a collie.
+}
 
 \subsection{Sensitivity to Initialization}
 \rubric{reasoning:2}
 
 For each of the four methods (PCA, MDS, ISOMAP, t-SNE) tried above, which ones give different results when you re-run the code? Does this match up with what we discussed in lectures, about which methods are sensitive to initialization and which ones aren't? Briefly discuss. \\
 \ans{
-    The only one of the previous methods that is sensitive to initialization is the t-SNE.
+    The only one of the previous methods that is sensitive to initialization is the t-SNE. 
+    This is because t-SNE does a work similar to k-means. It depends on how the data points
+    are randomly projected on to the reduced space, which yield different results on each 
+    run. On the other hand PCA, MDS, ISOMAP are deterministic they will always yield the 
+    same solution under the same data set and parameters.
 }
-% JATJ: Complete
 
 
 \section{Neural Networks}
@@ -190,21 +197,36 @@ Suppose that we train a neural network with sigmoid activations and one hidden l
 W = \mat{-2 & 2 & -1\\1 & -2 & 0}, v = \mat{3 \\1}.
 \]
 Assuming that we are doing regression, \blu{for a training example with features $x_i^T = \mat{-3 &-2 & 2}$ what are the values in this network of $z_i$, $h(z_i)$, and $\hat{y}_i$?}
-% JATJ: Complete
+\ans{
+    \[ z_i = \mat{-2 & 2 & -1\\1 & -2 & 0} \mat{-3 \\-2 \\ 2} =  \mat{0 \\ 1} \]
+    \[ h(z_i) = \mat{\frac{1}{1+\exp(0)} \\ \frac{1}{1+\exp(-1)}} = \mat{0.5 \\ 0.731} \]
+    \[ \hat{y}_i = \mat{3 & 1} \mat{0.5 \\ 0.731} = 2.231 \]
+}
 
 \subsection{SGD for a Neural Network: implementation}
 \rubric{code:5}
 
 
 If you run \texttt{python main.py -q 2} it will train a one-hidden-layer neural network on the MNIST handwritten digits data set using the \texttt{findMin} gradient descent code from your previous assignments. After running for the default number of gradient descent iterations (100), it tends to get a training and test error of around 5\% (depending on the random initialization). 
-\blu{Modify the code to instead use stochastic gradient descent. Use a minibatch size of 500 (which is 1\% of the training data) and a constant learning rate of $\alpha=0.001$. Report your train/test errors after 10 epochs on the MNIST data.} 
+\blu{Modify the code to instead use stochastic gradient descent. Use a minibatch size of 500 (which is 1\% of the training data) and a constant learning rate of $\alpha=0.001$. Report your train/test errors after 10 epochs on the MNIST data.}  \\
 \ans{
+    On 10 epochs the training error was 0.10648, and the test error 0.0992, after several runs it is 
+    consistently finishing with errors around 10\%
 }
 
 \subsection{SGD for a Neural Network: discussion}
 \rubric{reasoning:1}
 
 Compare the stochastic gradient implementation with the gradient descent implementation for this neural network. Which do you think is better? (There is no single correct answer here!) 
+\ans{
+    In terms of accuracy the gradient descent implementation, does a much beter obtaining a 5\% error, 
+    whereas the SGD obtains an error around 10\%. But in terms of efficiency SGD does an awesome work 
+    getting to 10\% of error in around 4 seconds, when the gradient descent takes around 75 seconds to 
+    reach the max iterations. \\ \\
+    In conclusion, out of the box normal GD almost ensure you good results at a high time 
+    cost. On the other hand SGD ensure you efficiency, with a proper hyperparameter tunning SGD will 
+    beat normal GD.
+}
 
 \subsection{Hyperparameter Tuning}
 \rubric{reasoning:2}
@@ -216,24 +238,87 @@ Try to improve the performance of the neural network by tuning the hyperparemete
 
 For a list of hyperparameters and their definitions, see the scikit-learn \texttt{MLPClassifier} documentation:\\
 \url{http://scikit-learn.org/stable/modules/generated/sklearn.neural_network.MLPClassifier.html}. Note: ``MLP'' stands for Multi-Layer Perceptron,
-which is another name for artificial neural network.
+which is another name for artificial neural network. \\
+\ans{
+    The default parameters for the MLPClassifier, get a 2\% test error with a running time around 60 to 70 seconds.\\ \\
+    I tried changing the default solver from \emph{adam} to \emph{sdg}, with different values on exclusive
+    parameters of \emph{sdg} like \texttt{momentum}, but didn't do any better than the \emph{adam} solver. \\ \\
+    By using \emph{adam} and the following parameters, the \texttt{batch\_size = 400} (default 200) 
+    give more data to the to use on each epoch which makes the gradient a better approximation, 
+    \texttt{learning\_rate\_init = 0.007} (default 0.001) increase the model speed of the gradient,
+    finally by setting \texttt{alpha = 0.0002} we prevent overfitting. \\ \\ 
+    With these parameters the time was reduced around 25 to 30 seconds, to a half of 
+    the original time while still preserving a 2\% testing error, but with a little increase on the 
+    training error to 0.1\%.
+}
 
 \section{Very-Short Answer Questions}
 \rubric{reasoning:12}
 
 \enum{
-\item Is non-negative least squares convex?
-\item Name two reasons you might want sparse solutions with a latent-factor model.
-\item Is ISOMAP mainly used for supervised or unsupervised learning? Is it parametric or non-parametric?
-\item Which is better for recommending moves to a new user, collaborative filtering or content-based filtering? Briefly justify your answer.
-\item Collaborative filtering and PCA both minimizing the squared error when approximating each $x_{ij}$ by $\langle w^j, z_i\rangle$; what are two differences between them?
-\item{Are neural networks mainly used for supervised or unsupervised learning? Are they parametric or nonparametric?}
-\item{Why might regularization become more important as we add layers to a neural network?}
-\item With stochastic gradient descent, the loss might go up or down each time the parameters are updated. However, we don't actually know which of these cases occurred. Explain why it doesn't make sense to check whether the loss went up/down after each update.
-\item{Consider using a fully-connected neural network for 3-class classification on a problem with $d=10$. If the network has one hidden layer of size $k=100$, how many parameters (including biases), does the network have?}
-\item{The loss for a neural network is typically non-convex. Give one set of hyperparameters for which the loss is actually convex.}
-\item What is the ``vanishing gradient'' problem with neural networks based on sigmoid non-linearities?
-\item{Convolutional networks seem like a pain... why not just use regular (``fully connected'') neural networks for image classification?}
+\item Is non-negative least squares convex? \\
+\ans{
+    Yes, it is a p norm, and we know that every p norm is a convex function.
+}
+\item Name two reasons you might want sparse solutions with a latent-factor model. \\
+\ans{
+    One is to reduce the storage of our latent-factor, so we can represent the same data 
+    in less space. Another advantage is that this also reduces the time of computing operations 
+    with an sparse matrix, which can reduce the training time significantly.
+}
+\item Is ISOMAP mainly used for supervised or unsupervised learning? Is it parametric or non-parametric? \\
+\ans{
+    ISOMAP is a non-parametric method that would be used for unsupervised learning, to reduce the 
+    dimensionality of the data set and make it easier to clusterize. An example of this, is run ISOMAP 
+    and with the ouput run kmeans or dbscan.
+}
+\item Which is better for recommending moves to a new user, collaborative filtering or content-based filtering? Briefly justify your answer. \\
+\ans{
+    For a new user content-based filtering probably would do a better job than collaborative filtering, 
+    because the user is new, we not have any data about he has "bought" to compare it between other users.
+}
+\item Collaborative filtering and PCA both minimizing the squared error when approximating each $x_{ij}$ by $\langle w^j, z_i\rangle$; what are two differences between them? \\
+\ans{
+    PCA doesn't have regularization whereas collaborative filtering does have.  % JATJ 
+}
+\item{Are neural networks mainly used for supervised or unsupervised learning? Are they parametric or nonparametric?} \\
+\ans{
+    Neural networks are mainly used for supervised learning and nonparametric.
+}
+\item{Why might regularization become more important as we add layers to a neural network?} \\
+\ans{
+    The complexity of the model grows as we add more layers, making it easier to overfit 
+    so regularization will help us in reducing the overfitting of our model.
+}
+\item With stochastic gradient descent, the loss might go up or down each time the parameters are updated. However, we don't actually know which of these cases occurred. Explain why it doesn't make sense to check whether the loss went up/down after each update. \\
+\ans{
+    We know that in general the gradient will point to a minima, the stochastic gradient might point on the 
+    wrong direction i.e. the training sample is an outlier. So we dont have to check if after each update 
+    the loss goes up or down, in overall after several updates we will be approaching to the minima.
+}
+\item{Consider using a fully-connected neural network for 3-class classification on a problem with $d=10$. If the network has one hidden layer of size $k=100$, how many parameters (including biases), does the network have?} \\
+\ans{
+    There will be 11 * 101 = 1111 parameters for the features (10 + 1 bias) and the hidden layer (100 + 1 bias), 
+    plus  101 * 3 = 303 the weight for connecting each node in the hidden layer with each class. So in total 1414.
+}
+\item{The loss for a neural network is typically non-convex. Give one set of hyperparameters for which the loss is actually convex.} \\
+\ans{
+    If we set 0 hidden layers the neural network becomes just logistic regression which has a convex loss function.
+}
+\item What is the ``vanishing gradient'' problem with neural networks based on sigmoid non-linearities? \\
+\ans{
+    By plotting a sigmoid function we can notice that the gradient on both extremas of the 
+    graph tend to be 0, this will cause the neural network to produce smaller and smaller 
+    weights until these weights disappear.
+}
+\item{Convolutional networks seem like a pain... why not just use regular (``fully connected'') neural networks for image classification?} \\
+\ans{
+    Convolutional network allow us to extract "significant" features by applying convolutions to 
+    the data, the result of these convolutions would make it much easier to classify rather than 
+    just using the plain features in a fully connected network. \\ \\
+    Another advantage is that we will need less space and time to be used. So when we are training with 
+    big data sets, it will have a much better performance than using just fully connected graph.
+}
 }
 
 
